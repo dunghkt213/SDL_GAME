@@ -13,7 +13,7 @@ bool TextureManager::load(std::string fileName, std::string
 	SDL_Texture* pTexture =
 		SDL_CreateTextureFromSurface(pRenderer, pTempSurface);
 	SDL_FreeSurface(pTempSurface);
-	// everything went ok, add the texture to our list
+	// everything went ok, add the texture20 to our list
 	if (pTexture != 0)
 	{
 		m_textureMap[id] = pTexture;

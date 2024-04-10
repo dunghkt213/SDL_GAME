@@ -38,4 +38,5 @@ private:
 	vector<SDL_Texture*> m_gameObjects;
 	static Game* Game_Instance;
 	int map_box[701][501];
+	tool tools;
 };

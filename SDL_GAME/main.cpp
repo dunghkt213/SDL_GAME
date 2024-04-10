@@ -22,4 +22,5 @@ int main(int argc, char* argv[])
 	}
 	g_game->clean();
 	return 0;
+ 
 }

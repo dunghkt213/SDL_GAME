@@ -93,6 +93,10 @@ void Player:: move()
 }
 void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
 {
+    //if (hp <= 0)
+    //{
+    //    check_die = 1;
+    //}
     if (check_die != 1 && input_status.attack != 1)
     {
 
@@ -103,6 +107,7 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
             {
             case SDLK_RIGHT:
             {
+                hp -= 20;
                 input_status.right = 1;
                 status = WALK_RIGHT;
                 Fame.fame = 2;
@@ -198,8 +203,16 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
 
 void Player::draw(SDL_Renderer* pRenderer)
 {
-   
-   
+    if (check_die == 1)
+    {
+        if (Fame.die <= 3)
+        {
+            TextureManager::Instance()->draw_player("player", p_x, p_y, 16 + 49 * Fame.die, 456, 22, 19, 46, 48, pRenderer, SDL_FLIP_NONE);
+            SDL_Delay(50);
+            Fame.die++;
+        }
+    }
+    else 
     if (input_status.attack == 1)
     {
     cout << "attack" << " " << Fame.move_attack << "\n";
@@ -260,18 +273,7 @@ void Player::draw(SDL_Renderer* pRenderer)
     }
  
 }
-
-void Player::update()
+void Enemy::move()
 {
-
-}
-void Enemy::update()
-{
-	m_y += 1;
-	m_x += 1;
-	m_currentFrame = int(((SDL_GetTicks() / 100) % 6));
-}
-void Enemy::draw(SDL_Renderer* pRenderer)
-{
-	GameObject::draw(pRenderer);
+	
 }

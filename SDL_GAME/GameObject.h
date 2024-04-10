@@ -4,6 +4,7 @@
 #include<SDL_image.h>
 #include"TextManager.h"
 #include<vector>
+#include"tool.h"
 struct Input
 {
 	int left;
@@ -34,7 +35,7 @@ struct fame
 	int move_right = 0;
 	int move_down= 0;
 	int move_attack=0;
-	int move_die = 0;
+	int die = 0;
 	void check()
 	{
 		if (move_left > 5)
@@ -90,8 +91,6 @@ public:
 		return Player_Instance;
 	}
 	void draw(SDL_Renderer* pRenderer);
-	void update();
-	void clean();
 	void attack();
 	void move();
 	void resert();
@@ -122,6 +121,7 @@ private:
 	fame Fame;
 	int dr_width = 30;
 	int dr_height = 50;
+	int hp = 100;
 };
 
 
@@ -130,7 +130,10 @@ class Enemy : public GameObject
 public:
 	void draw(SDL_Renderer* pRenderer);
 	void update();
-	void clean();
+	void move();
+	
+private:
+
 };
 
 

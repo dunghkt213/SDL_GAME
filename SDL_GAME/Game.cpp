@@ -93,6 +93,7 @@ void Game::update()
 }
 void Game::render()
 {
+	
 	SDL_RenderClear(m_pRenderer); // clear to the draw colour
 	// loop through our objects and draw them
 	Map:: Instance()->Map_draw(m_pRenderer);

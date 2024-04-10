@@ -5,8 +5,8 @@ class Map
 {
 private:
 	int x=0, y=0;
-	int  height = 250;
-	int  width = 350;
+	int  height = 500;
+	int  width = 700;
 	string m_textureID = "map";
 	static Map* Map_Instance;
 public:

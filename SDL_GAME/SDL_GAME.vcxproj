@@ -137,6 +137,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="TextManager.cpp" />
+    <ClCompile Include="tool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="setup.h" />
     <ClInclude Include="TextManager.h" />
+    <ClInclude Include="tool.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
