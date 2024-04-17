@@ -13,9 +13,9 @@ SDL_Renderer* Game::get_render()
 {
 	return m_pRenderer;
 }
-void Game:: push(SDL_Texture* texture)
+void Game:: push(Enemy enemy)
 {
-	m_gameObjects.push_back(texture);
+	vector_enemy.push_back(enemy);
 }
 bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
@@ -68,6 +68,12 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	{
 		return false;
 	}
+	if (!TextureManager::Instance()->load("assets/skeleton.png", "enemy", m_pRenderer))
+	{
+		return false;
+	}
+	Enemy e1;
+	push(e1);
 	std::cout << "init success\n";
 	m_bRunning = true;
 	return true;
@@ -96,9 +102,14 @@ void Game::render()
 	
 	SDL_RenderClear(m_pRenderer); // clear to the draw colour
 	// loop through our objects and draw them
-	Map:: Instance()->Map_draw(m_pRenderer);
+	Map::Instance()->Map_draw(m_pRenderer);
+	e2.set_delay();
+	e2.move();
+	e2.draw(m_pRenderer);
+	Player::Instance()->set_delay();
 	Player::Instance()->move();
 	Player::Instance()-> draw(m_pRenderer);
+
 	//for (std::vector<GameObject*>::size_type i = 0; i !=
 	//	m_gameObjects.size(); i++)
 	//{

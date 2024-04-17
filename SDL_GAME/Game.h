@@ -26,7 +26,7 @@ public:
 	void clean();
 	bool running() { return m_bRunning;}
 	void draw();
-	void push(SDL_Texture* texture);
+	void push(Enemy enemy);
 private:
 	int m_currentFrame;
 	SDL_Window* m_pWindow;
@@ -35,8 +35,9 @@ private:
 	SDL_Texture* m_pTexture; 
 	SDL_Rect m_sourceRectangle; 
 	SDL_Rect m_destinationRectangle; 
-	vector<SDL_Texture*> m_gameObjects;
+	vector<Enemy> vector_enemy;
 	static Game* Game_Instance;
 	int map_box[701][501];
 	tool tools;
+	Enemy e2;
 };

@@ -9,6 +9,8 @@ private:
 	int  width = 700;
 	string m_textureID = "map";
 	static Map* Map_Instance;
+	int move_x;
+	int move_y;
 public:
 	static Map* Instance()
 	{	
@@ -22,4 +24,5 @@ public:
 	void Map_get(int x, int  y);
 	void Map_update(int p_x,int p_y);
 	void Map_draw( SDL_Renderer* pRenderer);
+	pair<int, int> get_move();
 };

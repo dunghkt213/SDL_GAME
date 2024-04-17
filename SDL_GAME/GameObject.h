@@ -36,6 +36,8 @@ struct fame
 	int move_down= 0;
 	int move_attack=0;
 	int die = 0;
+	int move_stop = 0;
+	int move_being_attack = 0;
 	void check()
 	{
 		if (move_left > 5)
@@ -53,6 +55,14 @@ struct fame
 		if (move_down > 5)
 		{
 			move_down = 0;
+		}
+		if (move_down > 5)
+		{
+			move_down = 0;
+		}
+		if (move_stop > 5)
+		{
+			move_stop = 0;
 		}
 		//cout << " " << "move up" << " " << move_up << '\n';
 		//cout << " " << "move right" << " " << move_right << '\n';
@@ -75,6 +85,7 @@ protected:
 	int m_y;
 	int m_width;
 	int m_height;
+	bool being_attack = 0;
 };
 
 
@@ -95,7 +106,23 @@ public:
 	void move();
 	void resert();
 	void get(int x, int y);
+
+	pair<int, int> getxy()
+	{
+		pair<int, int>a;
+		a.first = p_x;
+		a.second = p_y;
+		return a;
+	}
     void HandelInput(SDL_Event events, SDL_Renderer* screen);
+	void set_delay()
+	{
+		if (delay <= 0)
+		{
+			delay=1;
+		}
+		delay--;
+	}
 private:
 	static Player* Player_Instance;
 	int step = 46;
@@ -116,12 +143,13 @@ private:
 	int player_height=24;
 	vector<SDL_Texture*>Animation[9];
 	Input input_status;
-	int p_x=350;
-	int p_y=220;
+	int p_x=100;
+	int p_y=100;
 	fame Fame;
 	int dr_width = 30;
 	int dr_height = 50;
 	int hp = 100;
+	int delay = 0;
 };
 
 
@@ -129,11 +157,24 @@ class Enemy : public GameObject
 {
 public:
 	void draw(SDL_Renderer* pRenderer);
-	void update();
 	void move();
+	void set_delay();
+	void set_vt(int x,int y)
+	{
+		this->e_x = x;
+		this->e_y = y;
+	}
 	
 private:
-
+	int e_x=680;
+	int e_y=480;
+	int status=0 ;
+	int move_attack = 0;
+	fame Fame;
+	bool being_attack = 0;
+	bool attack = 0;
+	int delay = 0;
+	bool die = 0;
 };
 
 
