@@ -3,8 +3,8 @@
 Map* Map::Map_Instance = nullptr;
 void Map::Map_get(int x, int y)
 {
-	this->x = x;
-	this->y = y;
+	if(x!=-1) this->x = x;
+	if( y!=-1) this->y = y;
 }
 void Map::Map_update(int p_x,int p_y)
 {

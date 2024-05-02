@@ -5,7 +5,7 @@
 #include"TextManager.h"
 #include"Game.h"
 #include"map.h"
-#define SPEED_PLAYER (int)10;
+#define SPEED_PLAYER (int)7
 #define WALK_UP 1;
 #define WALK_RIGHT 2;
 #define WALK_DOWN 3;
@@ -54,10 +54,11 @@ void Player:: resert()
     input_status.move_up = 0;
     input_status.move_down = 0;
 }
-void Player:: move()
+
+ void Player:: move()
 {
     int x = 0, y = 0;
-    cout << "nguoi"<<p_x << " " <<p_y << "\n";
+    //cout << "nguoi"<<p_x << " " <<p_y << "\n";
     resert();
     if (input_status.right == 1)
     {
@@ -79,17 +80,41 @@ void Player:: move()
          Fame.move_down++;
         y += SPEED_PLAYER;
     }
-    if ((p_x+x>700- 150 && input_status.right==1)|| (p_x+x<150 && input_status.left==1) 
-        || (p_y+y>500-150 && input_status.down) ||p_y+y<150 && input_status.up==1)
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
+   
+    if (p_x + x > 0 && p_x + x < 1612)
     {
-       
-        Map::Instance()->Map_update(x, y);
+        p_x += x;
     }
-    else
+    else x = 0;
+    if (p_y + y > 0 && p_y + y < 970)
     {
-        p_y += y; p_x += x;
+        p_y += y;
     }
-
+    else y = 0;
+    if ((x>0 && p_x - map_x >= 500)|| (p_y-map_y>=350 && y >0) || ( x< 0 && p_x - map_x <= 100) || (y <0 && p_y - map_y <= 100)) 
+    {
+        if (map_x + x >= 0 &&  map_x+x<1700-750 ) 
+        {
+            Map::Instance()->Map_get(map_x+x,-1);
+        }
+        if ( map_y + y >= 0 &&  map_y + y < 1080 - 550)
+        {
+            Map::Instance()->Map_get(-1, map_y + y);
+        }
+    }
+    //if ((p_x+x>700- 150 && input_status.right==1)|| (p_x+x<150 && input_status.left==1) 
+    //    || (p_y+y>500-150 && input_status.down) ||p_y+y<150 && input_status.up==1)
+    //{
+    //   
+    //    Map::Instance()->Map_update(x, y);
+    //}
+    //else
+    //{
+    //    p_y += y; p_x += x;
+    //}
+    
     //cout << p_x << " " << p_y << '\n';
     Fame.check();
 }
@@ -147,6 +172,11 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
                 Fame.fame = 3;
             }
             break;
+            case SDLK_z:
+            {
+                intput_skill = 1;
+            }
+            break;
             }
 
             //cout << "down\n";
@@ -188,6 +218,12 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
             input_status.down = 0;
         }
         break;
+
+        case SDLK_z:
+        {
+            intput_skill = 0;
+        }
+        break;
         default:
             break;
         }
@@ -201,15 +237,91 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
     }
             
 }
+void Player::skill()
+{
+    //if (status == 1)
+    //{
+    //    int x = p_x;
+    //    int y = p_y;
+    //    for (int i = 0; i < 4; i++)
+    //    {
+    //        boom b;
+    //        b.get_xy(x-12, y - 40 - 60 * i,i);
+    //        Game::Instance()->get_Boom(b);
 
+    //    }
+    //}
+    if (status == 1)
+    {
+        int x = p_x;
+        int y = p_y;
+        for (int i = 0; i < 4; i++)
+        {
+            boom b;
+            b.get_xy(x - 12, y - 40 - 60 * i, i);
+            vector_boom.push_back(b);
+        }
+    }
+    else if (status == 2)
+    {
+        int x = p_x;
+        int y = p_y;
+        for (int i = 0; i < 3; i++)
+        {
+            boom b;
+            b.get_xy(x + 12 + 40 +60*i, y, i);
+            vector_boom.push_back(b);
+        }
 
+    }
+    else if (status == 4)
+    {
+        int x = p_x;
+        int y = p_y;
+        for (int i = 0; i < 3; i++)
+        {
+            boom b;
+            b.get_xy(x - 12 -40 -60*i, y, i);
+            vector_boom.push_back(b);
+        }
+
+    }
+    else if (status = 3)
+    {
+        int x = p_x;
+        int y = p_y;
+        for (int i = 0; i < 3; i++)
+        {
+            boom b;
+            b.get_xy(x - 12, y + 40 + 60 * i, i);
+            vector_boom.push_back(b);
+        }
+    }
+}
 void Player::draw(SDL_Renderer* pRenderer)
 {
+    for (int i = 0; i < vector_boom.size(); i++)
+    {
+	    //Game::Instance()->get_vector_boom()[i].plus_fame();
+	    vector_boom[i].check_delay();
+        vector_boom[i].run(pRenderer);
+	    if (vector_boom[i].check_done() == 1)
+	    {
+		    vector_boom.erase(vector_boom.begin() + i);
+	    }
+    }
+    if (intput_skill == 1)
+    {
+        skill();
+        intput_skill = 0;
+    }
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
     if (check_die == 1)
     {
         if (Fame.die <= 3)
         {
-            TextureManager::Instance()->draw_player("player", p_x, p_y, 16 + 49 * Fame.die, 456, 22, 19, 46, 48, pRenderer, SDL_FLIP_NONE);
+            TextureManager::Instance()->draw_player("player", p_x-map_x, p_y- map_y, 16 + 49 * Fame.die, 456, 22, 19, 46, 48, pRenderer, SDL_FLIP_NONE);
             SDL_Delay(50);
             Fame.die++;
         }
@@ -217,22 +329,48 @@ void Player::draw(SDL_Renderer* pRenderer)
     else 
     if (input_status.attack == 1)
     {
+
         int srcx = 46 * Fame.move_attack;
+        //if (Fame.move_attack == 2) skill();
         int srcy = 336;
          if (status == 2)
         {
+             SDL_Rect rect;
+             rect.x = p_x + 15;
+             rect.y = p_y + 30;
+             rect.w = 40;
+             rect.h = 30;
+             Game::Instance()->get_hitbox({ rect,1 });
             srcy = 336;
         }
         else if (status == 4)
         {
+             SDL_Rect rect;
+             rect.x = p_x-25;
+             rect.y = p_y + 30;
+             rect.w = 40;
+             rect.h = 25;
+             Game::Instance()->get_hitbox({ rect,1 });
             srcy = 336;
         }
         else if (status == 3)
         {
+             SDL_Rect rect;
+             rect.x = p_x ;
+             rect.y = p_y + 30;
+             rect.w = 40;
+             rect.h = 30;
+             Game::Instance()->get_hitbox({ rect,1 });
             srcy = 288;
         }
         else if (status == 1)
         {
+             SDL_Rect rect;
+             rect.x = p_x+5;
+             rect.y = p_y+5;
+             rect.w = 20;
+             rect.h = 20;
+             Game::Instance()->get_hitbox({ rect,1 });
             srcy = 384;
         }
         if (delay == 0) Fame.move_attack++;
@@ -243,46 +381,78 @@ void Player::draw(SDL_Renderer* pRenderer)
         }
         if (status == 4)
         {
-            TextureManager::Instance()->draw_player("player", p_x - 40, p_y - 40, srcx, srcy, 46, 48,100,100, pRenderer, SDL_FLIP_HORIZONTAL);
+            TextureManager::Instance()->draw_player("player", p_x - map_x - 40, p_y - map_y - 40, srcx, srcy, 46, 48,100,100, pRenderer, SDL_FLIP_HORIZONTAL);
         }
         else
         {
-            TextureManager::Instance()->draw_player("player", p_x - 40, p_y - 40, srcx, srcy, 46, 48, 100,100, pRenderer, SDL_FLIP_NONE);
+            TextureManager::Instance()->draw_player("player", p_x - map_x - 40, p_y - map_y - 40, srcx, srcy, 46, 48, 100,100, pRenderer, SDL_FLIP_NONE);
         }
     }
     else
     {
         if (status == 0)
         {
-            TextureManager::Instance()->draw_player("player", p_x, p_y, 16 + 48 * Fame.move_stop, 19, 18, 23, 35, 50, pRenderer, SDL_FLIP_NONE);
+            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_stop, 19, 18, 23, 35, 50, pRenderer, SDL_FLIP_NONE);
             if(delay==0) Fame.move_stop++;
         }
         else if (status == 2)
         {
 
-            TextureManager::Instance()->draw_player("player", p_x, p_y, 16 + 48 * Fame.move_right, move_right , player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
+            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right , player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
 
         }
         else if (status == 4)
         {
-            TextureManager::Instance()->draw_player("player", p_x, p_y, 16 + 48 * Fame.move_right, move_right, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_HORIZONTAL);
+            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_HORIZONTAL);
         }
         else if (status == 3)
         {
-            TextureManager::Instance()->draw_player("player", p_x, p_y, 16 + 48 * Fame.move_down, move_down, player_width, player_height,  dr_width, dr_height,pRenderer, SDL_FLIP_NONE);
+            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_down, move_down, player_width, player_height,  dr_width, dr_height,pRenderer, SDL_FLIP_NONE);
         }
         else if (status == 1)
         {
-            TextureManager::Instance()->draw_player("player", p_x, p_y, 16 + 48 * Fame.move_up, move_up, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
+            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_up, move_up, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
         }
         Fame.check();
     }
- 
+
+    //if (Game::Instance()->get_vector_boom().size() > 0 && Game::Instance()->get_vector_boom()[0].check_done() != 1)
+    //{
+    //    Game::Instance()->get_vector_boom()[0].check_delay();
+    //    Game::Instance()->get_vector_boom()[0].run(pRenderer);
+    //}
+}
+void Player::check_being_attack(vector<pair<SDL_Rect, int>> v)
+{
+    for (pair<SDL_Rect, int> u : v)
+    {
+        SDL_Rect rect = u.first;
+        if (u.second != 2) continue;
+        int x_hitbox = u.first.x;
+        int y_hitbox = u.first.y;
+        int w_hitbox = u.first.w;
+        int h_hitbox = u.first.h;
+        if (y_hitbox <= p_y && p_y <= y_hitbox + h_hitbox)
+        {
+            if (p_x + p_w > x_hitbox)
+            {
+                being_attack = 1;
+            }
+        }
+        if (y_hitbox >= p_y && p_y + p_h <= y_hitbox)
+        {
+            if (p_x + p_w > x_hitbox)
+            {
+                being_attack = 1;
+            }
+        }
+
+    }
 }
 void Enemy::move()
 {
     //cout << e_x << " " << e_y << "\n";
-    if (attack != 1)
+    if (attack != 1 && being_attack!=1 && die!=1)
     {
         int p_x = Player::Instance()->getxy().first;
         int p_y = Player::Instance()->getxy().second;
@@ -300,25 +470,27 @@ void Enemy::move()
         }
         else
         {
-            if (abs(p_y - e_y) <= 60 && abs(p_x - e_x) <= 80)
+            if (abs(p_y - e_y) <= 200 && abs(p_x - e_x) <= 330)
             {
                 if (p_y > e_y)
                 {
-                    e_y += min((int)abs(p_y - e_y), 8);
+                    e_y += min((int)abs(p_y - e_y), 5);
                 }
                 if (p_y < e_y)
                 {
-                    e_y -= min((int)abs(p_y - e_y), 8);
+                    e_y -= min((int)abs(p_y - e_y), 5);
                 }
                 if (p_x - 20 > e_x)
                 {
-                    e_x += min((int)abs(p_x - 20 - (e_x)), 8);
+                    e_x += min((int)abs(p_x - 20 - (e_x)), 5);
                     status = 2;
+                    last_status = 2;
                 }
                 if (p_x + 20 < e_x)
                 {
-                    e_x -= min((int)abs(p_x + 20 - e_x), 8);
+                    e_x -= min((int)abs(p_x + 20 - e_x), 5);
                     status = 4;
+                    last_status = 4;
                 }
             }
             else
@@ -331,68 +503,173 @@ void Enemy::move()
    
 
 }
+void Enemy::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRenderer)
+{
+    for (pair<SDL_Rect, int> u  : v)
+    {
+        SDL_Rect rect = u.first;
+        if (u.second != 1) continue;
+        rect.x = rect.x - Map::Instance()->get().first;
+        rect.y = rect.y - Map::Instance()->get().second;
+        //SDL_RenderDrawRect(pRenderer, &rect);
+        SDL_Rect r2;
+        int x_hitbox = u.first.x;
+        int y_hitbox = u.first.y;
+        int w_hitbox = u.first.w;
+        int h_hitbox = u.first.h;
+        int x = e_x+25;
+        int y = e_y + 10;
+        int w = e_w - 10;
+        int h = e_h-10;
+        r2.x = x- Map::Instance()->get().first;
+        r2.y = y+10 - Map::Instance()->get().second;
+        r2.w = w-10;
+        r2.h = h;
+        //SDL_RenderDrawRect(pRenderer, &r2);
+        //cout << e_x << " " << e_y << " " << e_h << " " << e_w << " | " << x_hitbox << " " << y_hitbox << " " << h_hitbox << " " << w_hitbox << "\n";
+        if (y_hitbox <= y && y <= y_hitbox + h_hitbox)
+        {
+            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox <= x && x_hitbox + w_hitbox >= x))
+            {
+                being_attack = 1;
+                hp -= 20;
+                if (hp <= 0)
+                {
+                    die = 1;
+                }
+            }
+        }
+        if (y_hitbox >= y && y + h >= y_hitbox)
+        {
+            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox<=x && x_hitbox+w_hitbox>=x))
+            {
+                being_attack = 1;
+                hp -= 20;
+                if (hp <= 0)
+                {
+                    die = 1;
+                }
+            }
+        }
+
+
+    }
+}
 void Enemy::draw(SDL_Renderer* pRenderer)
 {
+    
     int p_x = Player::Instance()->getxy().first;
     int p_y = Player::Instance()->getxy().second;
     //cout << attack << " " << Fame.move_attack << " ";
     //cout << p_x << " " << p_y <<" "<<e_x<<" "<<e_y<<"\n";
-    if (being_attack == 1)
-    {
-        TextureManager::Instance()->draw_player("enemy", e_x + 5, e_y, 21 + Fame.move_being_attack * 65, 222,
-            28, 26, 50, 50, pRenderer, SDL_FLIP_NONE);
-             Fame.move_being_attack++;
-        if (Fame.move_being_attack == 3)
-        {
-            Fame.move_being_attack = 0;
-            being_attack = 0;
-            status = 0;
-        }
-
-    }
-    else if (attack == 1)
-    {
-        int srcx = 13 + move_attack * 65;
-        int srcy = 152;
-        if (delay == 0) move_attack++;
-        if (move_attack >= 5)
-        {
-            move_attack = 0;
-            attack = 0;
-        }
-        if (status == 4)
-        {
-            TextureManager::Instance()->draw_player("enemy", e_x, e_y - 13, srcx, srcy,
-                40, 40, 80, 80, pRenderer, SDL_FLIP_HORIZONTAL);
-        }
-        else
-        {
-            TextureManager::Instance()->draw_player("enemy", e_x, e_y - 13, srcx, srcy,
-                40, 40, 80, 80, pRenderer, SDL_FLIP_NONE);
-        }
-    }
-    else
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
+    if (die == 1)
     {
         if (status == 2)
         {
-            TextureManager::Instance()->draw_player("enemy", e_x, e_y + 5, 21 + Fame.move_right * 65, 97,
-                40, 40, 80, 80, pRenderer, SDL_FLIP_NONE);
-            if(delay == 0) Fame.move_right++;
+            TextureManager::Instance()->draw_player("enemy", e_x - map_x+5 , e_y - map_y+10, 21 + Fame.move_die * 61, 287,
+                30, 25, 50, 50, pRenderer, SDL_FLIP_NONE);
         }
-        if (status == 4)
+        else
         {
-            TextureManager::Instance()->draw_player("enemy", e_x, e_y + 5, 21 + Fame.move_left * 65, 97,
-                40, 40, 80, 80, pRenderer, SDL_FLIP_HORIZONTAL);
-            if (delay == 0) Fame.move_left++;
+            TextureManager::Instance()->draw_player("enemy", e_x - map_x+5, e_y - map_y+10, 21 + Fame.move_die * 61, 287,
+                30, 25, 50, 50, pRenderer, SDL_FLIP_HORIZONTAL);
+
         }
-        if (status == 0)
+        if (delay == 0)
         {
-            TextureManager::Instance()->draw_player("enemy", e_x, e_y + 5, 21 + Fame.move_stop * 65, 35,
-                20, 19, 40, 43, pRenderer, SDL_FLIP_NONE);
-            if (delay == 0) Fame.move_stop++;
+            Fame.move_die++;
+            if (Fame.move_die >= 5)
+            {
+     
+                Fame.move_die--;
+                time_die--;
+            }
         }
-        Fame.check();
     }
+    else if (being_attack == 1)
+        {
+            if (Fame.move_being_attack == 1)
+            {
+                if (Player::Instance()->getxy().first>e_x)e_x -= 3;
+                else e_x += 3;
+            }
+            if (Player::Instance()->getxy().first > e_x)
+            {
+                TextureManager::Instance()->draw_player("enemy", e_x - map_x + 5, e_y - map_y, 21 + Fame.move_being_attack * 65, 222,
+                    28, 26, 50, 50, pRenderer, SDL_FLIP_NONE);
+            }
+            else
+            {
+                TextureManager::Instance()->draw_player("enemy", e_x - map_x + 5, e_y - map_y, 21 + Fame.move_being_attack * 65, 222,
+                    28, 26, 50, 50, pRenderer, SDL_FLIP_HORIZONTAL);
+            }
+             if(delay == 0 ) Fame.move_being_attack++;
+            if (Fame.move_being_attack == 3)
+            {
+                Fame.move_being_attack = 0;
+                being_attack = 0;
+                move_attack = 0;
+            }
+
+        }
+        else if (attack == 1)
+        {
+            int srcx = 13 + move_attack * 65;
+            int srcy = 152;
+            if (delay == 0) move_attack++;
+            if (move_attack >= 5)
+            {
+                move_attack = 0;
+                attack = 0;
+            }
+            if (status == 0)
+            {
+                if (Player::Instance()->getxy().first < e_x)
+                {
+                    status = 4;
+                }
+                else status = 2;
+            }
+            if (status == 4)
+            {
+                TextureManager::Instance()->draw_player("enemy", e_x - map_x-4, e_y-map_y - 13, srcx, srcy,
+                    40, 40, 80, 80, pRenderer, SDL_FLIP_HORIZONTAL);
+            }
+            else
+            {
+                TextureManager::Instance()->draw_player("enemy", e_x - map_x, e_y - map_y - 13, srcx, srcy,
+                    40, 40, 80, 80, pRenderer, SDL_FLIP_NONE);
+            }
+        }
+        else
+        {
+            if (status == 2)
+            {
+                TextureManager::Instance()->draw_player("enemy", e_x - map_x, e_y - map_y + 5, 21 + Fame.move_right * 65, 97,
+                    40, 40, 80, 80, pRenderer, SDL_FLIP_NONE);
+                if(delay == 0) Fame.move_right++;
+            }
+            if (status == 4)
+            {
+                TextureManager::Instance()->draw_player("enemy", e_x - map_x, e_y - map_y + 5, 21 + Fame.move_left * 65, 97,
+                    40, 40, 80, 80, pRenderer, SDL_FLIP_HORIZONTAL);
+                if (delay == 0) Fame.move_left++;
+            }
+            if (status == 0)
+            {
+                if (last_status == 4)
+                {
+                    TextureManager::Instance()->draw_player("enemy", e_x - map_x+10, e_y - map_y + 4, 21 + Fame.move_stop * 65, 35,
+                        20, 19, 40, 40, pRenderer, SDL_FLIP_HORIZONTAL);
+                }
+                else TextureManager::Instance()->draw_player("enemy", e_x - map_x, e_y - map_y + 5, 21 + Fame.move_stop * 65, 35,
+                    20, 19, 40, 40, pRenderer, SDL_FLIP_NONE);
+                if (delay == 0) Fame.move_stop++;
+            }
+            Fame.check();
+        }
   
 }
 void Enemy:: set_delay()
@@ -403,4 +680,271 @@ void Enemy:: set_delay()
     }
     delay--;
     
+}
+void Enemy :: spawn()
+{
+
+}
+//void enemy_home::draw(SDL_Renderer* pRenderer)
+//{
+//    int map_x = Map::Instance()->get().first;
+//    int map_y = Map::Instance()->get().second;
+//    TextureManager::Instance()->draw_player("enemy_home", x - map_x, y - map_y ,5 , 23,
+//        119, 147, 70, 90, pRenderer, SDL_FLIP_NONE);
+//}
+//void enemy_home::being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer)
+//{
+//    for (pair<SDL_Rect, int> u : v)
+//    {
+//        SDL_Rect rect = u.first;
+//        if (u.second != 1) continue;
+//        rect.x = rect.x - Map::Instance()->get().first; 
+//        rect.y = rect.y - Map::Instance()->get().second;
+//        //SDL_RenderDrawRect(pRenderer, &rect);
+//        SDL_Rect r2;
+//        int x_hitbox = u.first.x;
+//        int y_hitbox = u.first.y;
+//        int w_hitbox = u.first.w;
+//        int h_hitbox = u.first.h;
+//        r2.x = x - Map::Instance()->get().first;
+//        r2.y = y - Map::Instance()->get().second;
+//        r2.w = w;
+//        r2.h = h;
+//        //SDL_RenderDrawRect(pRenderer, &r2);
+//        //cout << e_x << " " << e_y << " " << e_h << " " << e_w << " | " << x_hitbox << " " << y_hitbox << " " << h_hitbox << " " << w_hitbox << "\n";
+//        if (y_hitbox <= y && y <= y_hitbox + h_hitbox)
+//        {
+//            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox <= x && x_hitbox + w_hitbox >= x))
+//            {
+//                hp -= 20;
+//                if (hp <= 0)
+//                {
+//                    die = 1;
+//                }
+//            }
+//        }
+//        if (y_hitbox >= y && y + h >= y_hitbox)
+//        {
+//            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox <= x && x_hitbox + w_hitbox >= x))
+//            {
+//                hp -= 20;
+//                if (hp <= 0)
+//                {
+//                    die = 1;
+//                }
+//            }
+//        }
+//
+//
+//    }
+//}
+void Enemy2::move()
+{
+    //cout << e_x << " " << e_y << "\n";
+    if (attack != 1 && being_attack != 1 && die != 1)
+    {
+        int p_x = Player::Instance()->getxy().first;
+        int p_y = Player::Instance()->getxy().second;
+        if (p_y == e_y && abs(p_x - e_x) <= 22)
+        {
+            attack = 1;
+            if (p_x > e_x)
+            {
+                status = 2;
+            }
+            else
+            {
+                status = 4;
+            }
+        }
+        else
+        {
+            if (abs(p_y - e_y) <= 200 && abs(p_x - e_x) <= 330)
+            {
+                if (p_y > e_y)
+                {
+                    e_y += min((int)abs(p_y - e_y), 5);
+                }
+                if (p_y < e_y)
+                {
+                    e_y -= min((int)abs(p_y - e_y), 5);
+                }
+                if (p_x - 20 > e_x)
+                {
+                    e_x += min((int)abs(p_x - 20 - (e_x)), 5);
+                    status = 2;
+                    last_status = 2;
+                }
+                if (p_x + 20 < e_x)
+                {
+                    e_x -= min((int)abs(p_x + 20 - e_x), 5);
+                    status = 4;
+                    last_status = 4;
+                }
+            }
+            else
+            {
+                status = 0;
+            }
+        }
+
+    }
+
+
+}
+void Enemy2::draw(SDL_Renderer* pRenderer)
+{
+
+    int p_x = Player::Instance()->getxy().first;
+    int p_y = Player::Instance()->getxy().second;
+    //cout << attack << " " << Fame.move_attack << " ";
+    //cout << p_x << " " << p_y <<" "<<e_x<<" "<<e_y<<"\n";
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
+    if (die == 1)
+    {
+        if (last_status == 2)
+        {
+            TextureManager::Instance()->draw_player("enemy2_die", e_x - map_x + 5, e_y - map_y + 10, 30 + Fame.move_die * 126, srcy,
+                71, 73, 40, 40, pRenderer, SDL_FLIP_NONE);
+        }
+        else
+        {
+            TextureManager::Instance()->draw_player("enemy2_die", e_x - map_x + 5, e_y - map_y + 10, 30 + Fame.move_die * 126, srcy,
+                71, 73, 40,40, pRenderer, SDL_FLIP_HORIZONTAL);
+
+        }
+        if (delay == 0)
+        {
+            Fame.move_die++;
+            if (Fame.move_die >= 7)
+            {
+
+                if (die_time == 0)
+                {
+                    srcy = 175;
+                    Fame.move_die = 0;
+                    die_time = 1;
+                    e_y = e_y + 13;
+                    e_x = e_x + 7;
+                }
+            }
+        }
+    }
+    else if (attack == 1)
+    {
+        int srcx = 44 + move_attack * 185;
+        int srcy = 407;
+        if (delay == 0) move_attack++;
+        if (move_attack >= 5)
+        {
+            move_attack = 0;
+            attack = 0;
+        }
+        if (status == 0)
+        {
+            if (Player::Instance()->getxy().first < e_x)
+            {
+                status = 4;
+            }
+            else status = 2;
+        }
+        if (status == 4)
+        {
+            TextureManager::Instance()->draw_player("enemy2", e_x - map_x - 6, e_y - map_y - 13, srcx, srcy,
+                148,120, 75, 70, pRenderer, SDL_FLIP_HORIZONTAL);
+        }
+        else
+        {
+            TextureManager::Instance()->draw_player("enemy2", e_x - map_x-6, e_y - map_y - 13, srcx, srcy,
+                148, 120, 75, 70, pRenderer, SDL_FLIP_NONE);
+        }
+    }
+    else
+    {
+        if (status == 2)
+        {
+            TextureManager::Instance()->draw_player("enemy2", e_x - map_x, e_y - map_y + 5, 13 + Fame.move_right * 200, 250,
+                124, 77, 60, 50, pRenderer, SDL_FLIP_NONE);
+            if (delay == 0) Fame.move_right++;
+            if (Fame.move_right == 5)
+            {
+                Fame.move_right = 1;
+            }
+        }
+        if (status == 4)
+        {
+            TextureManager::Instance()->draw_player("enemy2", e_x - map_x, e_y - map_y + 5, 13 + Fame.move_left * 200, 250,
+                124, 77, 60, 50, pRenderer, SDL_FLIP_HORIZONTAL);
+            if (delay == 0) Fame.move_left++;
+            if (Fame.move_left == 5)
+            {
+                Fame.move_left = 1;
+            }
+        }
+        if (status == 0)
+        {
+            if (last_status == 4)
+            {
+                TextureManager::Instance()->draw_player("enemy2", e_x - map_x + 10, e_y - map_y + 4, 47 + Fame.move_stop *190, 43,
+                    87, 92, 50, 50, pRenderer, SDL_FLIP_HORIZONTAL);
+            }
+            else TextureManager::Instance()->draw_player("enemy2", e_x - map_x + 10, e_y - map_y + 4, 47 + Fame.move_stop * 190, 43,
+                87, 92, 50, 50, pRenderer, SDL_FLIP_NONE);
+            if (delay == 0) Fame.move_stop++;
+        }
+        Fame.check();
+    }
+
+}
+void Enemy2::set_delay()
+{
+    if (delay <= 0)
+    {
+        delay = 4;
+    }
+    delay--;
+
+}
+void Enemy2::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRenderer)
+{
+    for (pair<SDL_Rect, int> u  : v)
+    {
+        SDL_Rect rect = u.first;
+        if (u.second != 1) continue;
+        rect.x = rect.x - Map::Instance()->get().first;
+        rect.y = rect.y - Map::Instance()->get().second;
+        //SDL_RenderDrawRect(pRenderer, &rect);
+        SDL_Rect r2;
+        int x_hitbox = u.first.x;
+        int y_hitbox = u.first.y;
+        int w_hitbox = u.first.w;
+        int h_hitbox = u.first.h;
+        int x = e_x+25;
+        int y = e_y + 10;
+        int w = e_w - 10;
+        int h = e_h-10;
+        r2.x = x- Map::Instance()->get().first;
+        r2.y = y+10 - Map::Instance()->get().second;
+        r2.w = w-10;
+        r2.h = h;
+        //SDL_RenderDrawRect(pRenderer, &r2);
+        //cout << e_x << " " << e_y << " " << e_h << " " << e_w << " | " << x_hitbox << " " << y_hitbox << " " << h_hitbox << " " << w_hitbox << "\n";
+        if (y_hitbox <= y && y <= y_hitbox + h_hitbox)
+        {
+            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox <= x && x_hitbox + w_hitbox >= x))
+            {
+                   die = 1;
+            }
+        }
+        if (y_hitbox >= y && y + h >= y_hitbox)
+        {
+            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox<=x && x_hitbox+w_hitbox>=x))
+            {
+                   die = 1;
+            }
+        }
+
+
+    }
 }

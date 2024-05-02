@@ -24,5 +24,5 @@ public:
 	void Map_get(int x, int  y);
 	void Map_update(int p_x,int p_y);
 	void Map_draw( SDL_Renderer* pRenderer);
-	pair<int, int> get_move();
+	pair<int, int> get();
 };
