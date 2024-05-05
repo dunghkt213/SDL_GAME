@@ -20,3 +20,7 @@ pair<int, int> Map::get()
 {
 	return make_pair(x, y);
 }
+void Map::reset()
+{
+	Map_Instance = nullptr;
+}

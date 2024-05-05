@@ -137,6 +137,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="boom.cpp" />
+    <ClCompile Include="options.cpp" />
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="tool.cpp" />
   </ItemGroup>
@@ -145,6 +146,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="options.h" />
     <ClInclude Include="setup.h" />
     <ClInclude Include="boom.h" />
     <ClInclude Include="TextManager.h" />

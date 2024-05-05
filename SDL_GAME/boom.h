@@ -16,6 +16,7 @@ private:
 	int h = 60;
 	int delay = 0;
 	bool done = 0;
+	bool check_boom = 0;
 public:
 	void get_xy(int x,int y,int delay_fame)
 	{

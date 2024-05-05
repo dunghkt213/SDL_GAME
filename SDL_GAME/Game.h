@@ -49,10 +49,28 @@ public:
 	{
 		return v;
 	}
+	void push_enemy(Enemy e)
+	{
+		vector_enemy.push_back(e);
+	}
+	vector<Enemy> get_vector_enemy()
+	{
+		return vector_enemy;
+	}
+	void get_Window(SDL_Window* window)
+	{
+		m_pWindow = window;
+	}
+	void get_Renderer(SDL_Renderer* Renderer)
+	{
+		m_pRenderer = Renderer;
+	}
+	void load_data();
 	//int get_size_Boom()
 	//{
 	//	return Boom.size();
 	//}
+	void reset();
 private:
 	int m_currentFrame;
 	SDL_Window* m_pWindow;
@@ -62,13 +80,14 @@ private:
 	SDL_Rect m_sourceRectangle; 
 	SDL_Rect m_destinationRectangle; 
 	vector<Enemy> vector_enemy;
+	vector<Enemy2> vector_enemy2;
 	static Game* Game_Instance;
 	int map_box[701][501];
 	tool tools;
 	vector<pair<SDL_Rect,int>>v;
-	enemy_home Enemy_home;
+	vector<enemy_house> Enemy_house;
+	vector<int> heart;
 	//vector<boom> Boom;
 	//boom b;
-	Enemy2 e;
-	vector<Enemy2> vector_enemy2;
+	//vector<Enemy2> vector_enemy2;
 }; 

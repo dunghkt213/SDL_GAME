@@ -2,6 +2,10 @@
 
 TextureManager* TextureManager::s_pInstance = nullptr;
 
+void TextureManager::reset()
+{
+	s_pInstance = nullptr;
+}
 bool TextureManager::load(std::string fileName, std::string
 	id, SDL_Renderer* pRenderer)
 {

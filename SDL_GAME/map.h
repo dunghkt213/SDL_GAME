@@ -21,6 +21,7 @@ public:
 		}
 		return Map_Instance;
 	}
+	void reset();
 	void Map_get(int x, int  y);
 	void Map_update(int p_x,int p_y);
 	void Map_draw( SDL_Renderer* pRenderer);

@@ -122,13 +122,34 @@ public:
 	{
 		if (delay <= 0)
 		{
-			delay=1;
+			delay = 1;
 		}
 		delay--;
 	}
+	void set_delay_attack()
+	{
+		if (delay_attack <= 0)
+		{
+			delay_attack = 2;
+		}
+		delay_attack--;
+	}
 	void being_attack_block(vector<pair<SDL_Rect, SDL_Rect>> rect);
-	void check_being_attack(vector<pair<SDL_Rect, int>> v);
+	void check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer);
 	void skill();
+	int get_heart()
+	{
+		return heart;
+	}
+	int get_hp()
+	{
+		return hp;
+	}
+	bool check_die()
+	{
+		return die;
+	}
+	void reset();
 private:
 	static Player* Player_Instance;
 	int step = 46;
@@ -141,8 +162,7 @@ private:
 	int attack_down = 308;
 	int attack_right = 336;
 	int attack_up = 384;
-	int die = 432;
-    int check_die = 0;
+	int die = 0;
 	int check_attack = 0; 
 	int status;
 	int player_width=15;
@@ -156,13 +176,16 @@ private:
 	fame Fame;
 	int dr_width = 30;
 	int dr_height = 50;
-	int hp = 100;
+	int hp = 4;
 	int delay = 0;
 	bool skill1 = 0;
 	int time_skill1 = 0;
 	bool skill2 = 0;
 	int time_skill2 = 0;
+	int delay_attack = 0;
 	bool intput_skill =0;
+	bool check_hitbox = 0;
+	int heart = 4;
 	vector<boom> vector_boom;
 };
 
@@ -198,23 +221,54 @@ private:
 	bool attack = 0;
 	int delay = 0;
 	bool die = 0;
-	int hp = 200;
+	int hp = 40;
 	int last_status = 2;
+	bool check_hitbox = 0;
 };
 
 
-class enemy_home
+class enemy_house
 {
 private:
-	int hp=300;
+	int hp=6;
 	int x=800;
 	int y=339;
+	int src_w = 119;
+	int src_h = 147;
 	int w = 70;
 	int h = 90;
 	int die = 0;
+	int delay = 150;
+	string status = "5_5_blood";
 public:
+	void set_vt(int x,int y)
+	{
+		this->x = x;
+		this->y = y;
+	}
+	bool check_die()
+	{
+		return die;
+	}
 	void draw(SDL_Renderer* pRenderer);
-	void being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer);
+	pair<int, int> get_vt()
+	{
+		return make_pair(x,y);
+	}
+	bool check_delay()
+	{
+		if (delay == 0) return 1;
+		return 0;
+	}
+	void run_delay()
+	{
+		if (delay <= 0)
+		{
+			delay = 150;
+		}
+		delay--;
+	}
+	void check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer);
 };
 
 class Enemy2 : public GameObject
@@ -235,7 +289,12 @@ public:
 		else return 0;
 	}
 	void spawn();
+	void get_src(string s)
+	{
+		this->src = s;
+	}
 private:
+	string src; 
 	int srcy = 27;
 	bool die_time = 0;
 	int time_die = 20;
@@ -252,4 +311,5 @@ private:
 	bool die = 0;
 	int hp = 200;
 	int last_status = 2;
+	bool check_hitbox = 0;
 };

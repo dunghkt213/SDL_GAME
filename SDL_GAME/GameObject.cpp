@@ -3,8 +3,8 @@
 #include<iostream>
 #include<SDL_image.h>
 #include"TextManager.h"
-#include"Game.h"
 #include"map.h"
+#include"Game.h"
 #define SPEED_PLAYER (int)7
 #define WALK_UP 1;
 #define WALK_RIGHT 2;
@@ -83,7 +83,7 @@ void Player:: resert()
     int map_x = Map::Instance()->get().first;
     int map_y = Map::Instance()->get().second;
    
-    if (p_x + x > 0 && p_x + x < 1612)
+    if (p_x + x > 0 && p_x + x < 1900)
     {
         p_x += x;
     }
@@ -95,7 +95,7 @@ void Player:: resert()
     else y = 0;
     if ((x>0 && p_x - map_x >= 500)|| (p_y-map_y>=350 && y >0) || ( x< 0 && p_x - map_x <= 100) || (y <0 && p_y - map_y <= 100)) 
     {
-        if (map_x + x >= 0 &&  map_x+x<1700-750 ) 
+        if (map_x + x >= 0 &&  map_x+x<2000-750 ) 
         {
             Map::Instance()->Map_get(map_x+x,-1);
         }
@@ -118,13 +118,17 @@ void Player:: resert()
     //cout << p_x << " " << p_y << '\n';
     Fame.check();
 }
+ void Player :: reset()
+ {
+    Player_Instance = nullptr;
+ }
 void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
 {
     //if (hp <= 0)
     //{
     //    check_die = 1;
     //}
-    if (check_die != 1 && input_status.attack != 1)
+    if (die != 1 && input_status.attack != 1)
     {
 
         if (events.type == SDL_KEYDOWN)
@@ -134,7 +138,6 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
             {
             case SDLK_RIGHT:
             {
-                hp -= 20;
                 input_status.right = 1;
                 status = WALK_RIGHT;
                 Fame.fame = 2;
@@ -167,9 +170,13 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
 
             case SDLK_SPACE:
             {
-                input_status.attack = 1;
-                Fame.move_attack = 0;
-                Fame.fame = 3;
+
+                if (input_status.attack == 0)
+                {
+                    input_status.attack = 1;
+                    Fame.move_attack = 0;
+                    Fame.fame = 3;
+                }
             }
             break;
             case SDLK_z:
@@ -224,6 +231,7 @@ void Player::HandelInput(SDL_Event events, SDL_Renderer* screen)
             intput_skill = 0;
         }
         break;
+
         default:
             break;
         }
@@ -255,7 +263,7 @@ void Player::skill()
     {
         int x = p_x;
         int y = p_y;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             boom b;
             b.get_xy(x - 12, y - 40 - 60 * i, i);
@@ -317,66 +325,68 @@ void Player::draw(SDL_Renderer* pRenderer)
     }
     int map_x = Map::Instance()->get().first;
     int map_y = Map::Instance()->get().second;
-    if (check_die == 1)
+    if (die == 1)
     {
-        if (Fame.die <= 3)
-        {
-            TextureManager::Instance()->draw_player("player", p_x-map_x, p_y- map_y, 16 + 49 * Fame.die, 456, 22, 19, 46, 48, pRenderer, SDL_FLIP_NONE);
-            SDL_Delay(50);
-            Fame.die++;
-        }
+        TextureManager::Instance()->draw_player("player", p_x-map_x, p_y- map_y, 16 + 49 * Fame.die, 456, 22, 19, 46, 48, pRenderer, SDL_FLIP_NONE);
+        SDL_Delay(50);
+        if( Fame.die <2) Fame.die++;
     }
     else 
     if (input_status.attack == 1)
     {
-
         int srcx = 46 * Fame.move_attack;
         //if (Fame.move_attack == 2) skill();
         int srcy = 336;
-         if (status == 2)
+        if (status == 2)
         {
-             SDL_Rect rect;
-             rect.x = p_x + 15;
-             rect.y = p_y + 30;
-             rect.w = 40;
-             rect.h = 30;
-             Game::Instance()->get_hitbox({ rect,1 });
+            SDL_Rect rect;
+            rect.x = p_x + 15;
+            rect.y = p_y + 30;
+            rect.w = 40;
+            rect.h = 30;
+            if (check_hitbox == 0) Game::Instance()->get_hitbox({ rect,1 });
+            check_hitbox = 1;
             srcy = 336;
         }
         else if (status == 4)
         {
-             SDL_Rect rect;
-             rect.x = p_x-25;
-             rect.y = p_y + 30;
-             rect.w = 40;
-             rect.h = 25;
-             Game::Instance()->get_hitbox({ rect,1 });
+            SDL_Rect rect;
+            rect.x = p_x - 25;
+            rect.y = p_y + 30;
+            rect.w = 40;
+            rect.h = 25;
+            if (check_hitbox == 0)Game::Instance()->get_hitbox({ rect,1 });
+            check_hitbox = 1;
             srcy = 336;
         }
         else if (status == 3)
         {
-             SDL_Rect rect;
-             rect.x = p_x ;
-             rect.y = p_y + 30;
-             rect.w = 40;
-             rect.h = 30;
-             Game::Instance()->get_hitbox({ rect,1 });
+            SDL_Rect rect;
+            rect.x = p_x;
+            rect.y = p_y + 30;
+            rect.w = 40;
+            rect.h = 30;
+            check_hitbox = 1;
+            if (check_hitbox == 0)Game::Instance()->get_hitbox({ rect,1 });
+            check_hitbox = 1;
             srcy = 288;
         }
         else if (status == 1)
         {
-             SDL_Rect rect;
-             rect.x = p_x+5;
-             rect.y = p_y+5;
-             rect.w = 20;
-             rect.h = 20;
-             Game::Instance()->get_hitbox({ rect,1 });
+            SDL_Rect rect;
+            rect.x = p_x + 5;
+            rect.y = p_y + 5;
+            rect.w = 20;
+            rect.h = 20;
+            if(check_hitbox == 0)Game::Instance()->get_hitbox({ rect,1 });
+            check_hitbox = 1;
             srcy = 384;
         }
-        if (delay == 0) Fame.move_attack++;
-        if (Fame.move_attack > 2)
+        if (delay_attack == 0) Fame.move_attack++;
+        if (Fame.move_attack >=2 )
         {
             Fame.move_attack = 1;
+            check_hitbox = 0;
             input_status.attack = 0;
         }
         if (status == 4)
@@ -422,37 +432,60 @@ void Player::draw(SDL_Renderer* pRenderer)
     //    Game::Instance()->get_vector_boom()[0].run(pRenderer);
     //}
 }
-void Player::check_being_attack(vector<pair<SDL_Rect, int>> v)
+void Player::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer)
 {
     for (pair<SDL_Rect, int> u : v)
     {
         SDL_Rect rect = u.first;
-        if (u.second != 2) continue;
+        if (u.second !=2) continue;
+        rect.x = rect.x - Map::Instance()->get().first;
+        rect.y = rect.y - Map::Instance()->get().second;
+        //SDL_RenderDrawRect(pRenderer, &rect);
+        SDL_Rect r2;
         int x_hitbox = u.first.x;
         int y_hitbox = u.first.y;
         int w_hitbox = u.first.w;
         int h_hitbox = u.first.h;
-        if (y_hitbox <= p_y && p_y <= y_hitbox + h_hitbox)
+        int x = p_x ;
+        int y = p_y + 10;
+        int w = p_w - 10;
+        int h = p_h - 10;
+        r2.x = x - Map::Instance()->get().first;
+        r2.y = y - Map::Instance()->get().second;
+        r2.w = w - 10;
+        r2.h = h;
+        //SDL_RenderDrawRect(pRenderer, &r2);
+        //cout << e_x << " " << e_y << " " << e_h << " " << e_w << " | " << x_hitbox << " " << y_hitbox << " " << h_hitbox << " " << w_hitbox << "\n";
+        if (y_hitbox <= y && y <= y_hitbox + h_hitbox)
         {
-            if (p_x + p_w > x_hitbox)
+            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox <= x && x_hitbox + w_hitbox >= x))
             {
                 being_attack = 1;
+                hp -= 1;
+                if (hp <= 0)
+                {
+                    die = 1;
+                }
             }
         }
-        if (y_hitbox >= p_y && p_y + p_h <= y_hitbox)
+        if (y_hitbox >= y && y + h >= y_hitbox)
         {
-            if (p_x + p_w > x_hitbox)
+            if ((x + w >= x_hitbox && x <= x_hitbox) || (x_hitbox <= x && x_hitbox + w_hitbox >= x))
             {
                 being_attack = 1;
+                hp -= 1;
+                if (hp <= 0)
+                {
+                    die = 1;
+                }
             }
         }
-
+        
     }
 }
 void Enemy::move()
 {
-    //cout << e_x << " " << e_y << "\n";
-    if (attack != 1 && being_attack!=1 && die!=1)
+    if (attack != 1 && being_attack!=1 && die!=1 && Player::Instance()->check_die() == 0)
     {
         int p_x = Player::Instance()->getxy().first;
         int p_y = Player::Instance()->getxy().second;
@@ -470,25 +503,25 @@ void Enemy::move()
         }
         else
         {
-            if (abs(p_y - e_y) <= 200 && abs(p_x - e_x) <= 330)
+            if (abs(p_y - e_y) <= 1000 && abs(p_x - e_x) <= 1000)
             {
                 if (p_y > e_y)
                 {
-                    e_y += min((int)abs(p_y - e_y), 5);
+                    e_y += min((int)abs(p_y - e_y), 3);
                 }
                 if (p_y < e_y)
                 {
-                    e_y -= min((int)abs(p_y - e_y), 5);
+                    e_y -= min((int)abs(p_y - e_y), 3);
                 }
                 if (p_x - 20 > e_x)
                 {
-                    e_x += min((int)abs(p_x - 20 - (e_x)), 5);
+                    e_x += min((int)abs(p_x - 20 - (e_x)), 3);
                     status = 2;
                     last_status = 2;
                 }
                 if (p_x + 20 < e_x)
                 {
-                    e_x -= min((int)abs(p_x + 20 - e_x), 5);
+                    e_x -= min((int)abs(p_x + 20 - e_x), 3);
                     status = 4;
                     last_status = 4;
                 }
@@ -590,6 +623,7 @@ void Enemy::draw(SDL_Renderer* pRenderer)
     }
     else if (being_attack == 1)
         {
+            
             if (Fame.move_being_attack == 1)
             {
                 if (Player::Instance()->getxy().first>e_x)e_x -= 3;
@@ -597,6 +631,7 @@ void Enemy::draw(SDL_Renderer* pRenderer)
             }
             if (Player::Instance()->getxy().first > e_x)
             {
+
                 TextureManager::Instance()->draw_player("enemy", e_x - map_x + 5, e_y - map_y, 21 + Fame.move_being_attack * 65, 222,
                     28, 26, 50, 50, pRenderer, SDL_FLIP_NONE);
             }
@@ -605,7 +640,7 @@ void Enemy::draw(SDL_Renderer* pRenderer)
                 TextureManager::Instance()->draw_player("enemy", e_x - map_x + 5, e_y - map_y, 21 + Fame.move_being_attack * 65, 222,
                     28, 26, 50, 50, pRenderer, SDL_FLIP_HORIZONTAL);
             }
-             if(delay == 0 ) Fame.move_being_attack++;
+            if(delay == 0 ) Fame.move_being_attack++;
             if (Fame.move_being_attack == 3)
             {
                 Fame.move_being_attack = 0;
@@ -623,6 +658,7 @@ void Enemy::draw(SDL_Renderer* pRenderer)
             {
                 move_attack = 0;
                 attack = 0;
+                check_hitbox = 0;
             }
             if (status == 0)
             {
@@ -634,11 +670,41 @@ void Enemy::draw(SDL_Renderer* pRenderer)
             }
             if (status == 4)
             {
+                SDL_Rect rect;
+                rect.x = e_x ;
+                rect.y = e_y + 20;
+                rect.w = 30;
+                rect.h = 20;
+                
+               
+                if (check_hitbox == 0 && move_attack == 4)
+                {
+                    Game::Instance()->get_hitbox({ rect,2 });
+                    check_hitbox = 1;
+                }
+                //rect.x = e_x -map_x;
+                //rect.y = e_y + 20 -map_y;
+     
+                //SDL_RenderDrawRect(pRenderer, &rect);
                 TextureManager::Instance()->draw_player("enemy", e_x - map_x-4, e_y-map_y - 13, srcx, srcy,
                     40, 40, 80, 80, pRenderer, SDL_FLIP_HORIZONTAL);
             }
             else
             {
+                SDL_Rect rect;
+                rect.x = e_x+35;
+                rect.y = e_y+20 ;
+                rect.w = 45;
+                rect.h = 20;
+                if (check_hitbox == 0 && move_attack == 4)
+                {
+                    Game::Instance()->get_hitbox({ rect,2 });
+                    check_hitbox = 1;
+                }
+                //rect.x = e_x+45-map_x;
+                //rect.y = e_y+20-map_y;
+ 
+                //SDL_RenderDrawRect(pRenderer, &rect);
                 TextureManager::Instance()->draw_player("enemy", e_x - map_x, e_y - map_y - 13, srcx, srcy,
                     40, 40, 80, 80, pRenderer, SDL_FLIP_NONE);
             }
@@ -683,16 +749,94 @@ void Enemy:: set_delay()
 }
 void Enemy :: spawn()
 {
-
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
+    if (rand() % 2 == 0)
+    {
+        this-> e_x = map_x + 700 + rand()%6;
+        this-> e_y = map_y + rand() % 500;
+    }
+    else  
+    {
+        this->e_x = map_x -30 ;
+        this->e_y = map_y + rand() % 500;
+    }
+    
 }
-//void enemy_home::draw(SDL_Renderer* pRenderer)
-//{
-//    int map_x = Map::Instance()->get().first;
-//    int map_y = Map::Instance()->get().second;
-//    TextureManager::Instance()->draw_player("enemy_home", x - map_x, y - map_y ,5 , 23,
-//        119, 147, 70, 90, pRenderer, SDL_FLIP_NONE);
-//}
-//void enemy_home::being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer)
+void enemy_house::draw(SDL_Renderer* pRenderer)
+{
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
+    if (die ==0 ) TextureManager::Instance()->draw_player(status, x - map_x+8, y - map_y-10, 0, 0,
+        205, 39, 50, 15, pRenderer, SDL_FLIP_NONE);
+    if (die == 0) TextureManager::Instance()->draw_player("Enemy_house", x - map_x, y - map_y ,5 , 23,
+        src_w, src_h, w, h, pRenderer, SDL_FLIP_NONE);
+    else TextureManager::Instance()->draw_player("Enemy_house_destroy", x - map_x, y - map_y, 5, 23,
+        src_w, src_h, w, h, pRenderer, SDL_FLIP_NONE);
+}
+void enemy_house::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer)
+{
+    for (pair<SDL_Rect, int> u : v)
+    {
+        SDL_Rect rect = u.first;
+        if (u.second != 1) continue;
+        rect.x = rect.x - Map::Instance()->get().first;
+        rect.y = rect.y - Map::Instance()->get().second;
+        //SDL_RenderDrawRect(pRenderer, &rect);
+        SDL_Rect r2;
+        int x_hitbox = u.first.x;
+        int y_hitbox = u.first.y;
+        int w_hitbox = u.first.w;
+        int h_hitbox = u.first.h;
+        int e_w = w-24;
+        int e_h = h - 20;
+        int e_y = y + 10;
+        int e_x = x+13;
+        r2.x = e_x - Map::Instance()->get().first;
+        r2.y = e_y - Map::Instance()->get().second;
+        r2.w = e_w ;
+        r2.h = e_h;
+        //SDL_RenderDrawRect(pRenderer, &r2);
+        bool check = 0;
+        //cout << e_x << " " << e_y << " " << e_h << " " << e_w << " | " << x_hitbox << " " << y_hitbox << " " << h_hitbox << " " << w_hitbox << "\n";
+        if (y_hitbox <= e_y && e_y <= y_hitbox + h_hitbox)
+        {
+            if ((e_x + e_w >= x_hitbox && e_x <= x_hitbox) || (x_hitbox <= e_x && x_hitbox + w_hitbox >= e_x))
+            {           
+                hp -= 1;
+                check = 1;
+                if (hp == 1) status = "1_5_blood";
+                if (hp == 2) status = "2_5_blood";
+                if (hp == 3) status = "3_5_blood";
+                if (hp == 4) status = "4_5_blood";
+                if (hp <= 0)
+                {
+                    die = 1;
+                }
+            }
+        }
+        if (y_hitbox >= e_y && e_y + e_h >= y_hitbox && check == 0)
+        {
+                if ((e_x + e_w >= x_hitbox && e_x <= x_hitbox) || (x_hitbox <= e_x && x_hitbox + w_hitbox >= e_x))
+                {
+                    hp -= 1;
+                    check = 1;
+                    if (hp == 1) status = "1_5_blood";
+                    if (hp == 2) status = "2_5_blood";
+                    if (hp == 3) status = "3_5_blood";
+                    if (hp == 4) status = "4_5_blood";
+                    if (hp <= 0)
+                    {
+                        die = 1;
+                    }
+                }
+           }
+        cout << "\n";
+
+    }
+}
+
+//void enemy_house::being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer)
 //{
 //    for (pair<SDL_Rect, int> u : v)
 //    {
@@ -840,6 +984,7 @@ void Enemy2::draw(SDL_Renderer* pRenderer)
         {
             move_attack = 0;
             attack = 0;
+            check_hitbox = 0;
         }
         if (status == 0)
         {
@@ -851,11 +996,34 @@ void Enemy2::draw(SDL_Renderer* pRenderer)
         }
         if (status == 4)
         {
+            SDL_Rect rect;
+            rect.x = e_x-6;
+            rect.y = e_y + 20;
+            rect.w = 25;
+            rect.h = 20;
+
+            if (check_hitbox == 0 && move_attack == 3)
+            {
+                Game::Instance()->get_hitbox({ rect,2 });
+                check_hitbox = 1;
+            }
+  
             TextureManager::Instance()->draw_player("enemy2", e_x - map_x - 6, e_y - map_y - 13, srcx, srcy,
                 148,120, 75, 70, pRenderer, SDL_FLIP_HORIZONTAL);
         }
         else
         {
+            
+            SDL_Rect rect;
+            rect.x = e_x + 50;
+            rect.y = e_y + 20;
+            rect.w = 17;
+            rect.h = 20;
+            if (check_hitbox == 0 && move_attack == 4)
+            {
+                Game::Instance()->get_hitbox({ rect,2 });
+                check_hitbox = 1;
+            }
             TextureManager::Instance()->draw_player("enemy2", e_x - map_x-6, e_y - map_y - 13, srcx, srcy,
                 148, 120, 75, 70, pRenderer, SDL_FLIP_NONE);
         }
@@ -914,7 +1082,7 @@ void Enemy2::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRen
         if (u.second != 1) continue;
         rect.x = rect.x - Map::Instance()->get().first;
         rect.y = rect.y - Map::Instance()->get().second;
-        //SDL_RenderDrawRect(pRenderer, &rect);
+        SDL_RenderDrawRect(pRenderer, &rect);
         SDL_Rect r2;
         int x_hitbox = u.first.x;
         int y_hitbox = u.first.y;
@@ -928,7 +1096,7 @@ void Enemy2::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRen
         r2.y = y+10 - Map::Instance()->get().second;
         r2.w = w-10;
         r2.h = h;
-        //SDL_RenderDrawRect(pRenderer, &r2);
+        SDL_RenderDrawRect(pRenderer, &r2);
         //cout << e_x << " " << e_y << " " << e_h << " " << e_w << " | " << x_hitbox << " " << y_hitbox << " " << h_hitbox << " " << w_hitbox << "\n";
         if (y_hitbox <= y && y <= y_hitbox + h_hitbox)
         {
