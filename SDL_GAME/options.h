@@ -8,6 +8,8 @@ private:
 	static options* options_Instance;
 	SDL_Window* m_pWindow;
 	SDL_Renderer* m_pRenderer;
+	bool poster = 1;
+	bool game_over = 0;
 public:
 	static options* Instance()
 	{
@@ -18,6 +20,10 @@ public:
 		}
 		return options_Instance;
 	}
+	bool check_game_over()
+	{
+		return game_over;
+	}
 	bool check_reset()
 	{
 		return reset;
@@ -26,13 +32,25 @@ public:
 	{
 		return pause;
 	}
+	bool check_poster()
+	{
+		return poster;
+	}
 	void get_reset(int x)
 	{
 		this->reset = x;
 	}
+	void get_poster(int x)
+	{
+		this->poster = x;
+	}
 	void get_pause(int x)
 	{
 		this->pause = x;
+	}
+	void get_game_over(int x)
+	{
+		this->game_over = x;
 	}
 	void get_window(SDL_Window* Window)
 	{

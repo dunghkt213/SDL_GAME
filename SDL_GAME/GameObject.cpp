@@ -5,6 +5,7 @@
 #include"TextManager.h"
 #include"map.h"
 #include"Game.h"
+#include"options.h"
 #define SPEED_PLAYER (int)7
 #define WALK_UP 1;
 #define WALK_RIGHT 2;
@@ -274,7 +275,7 @@ void Player::skill()
     {
         int x = p_x;
         int y = p_y;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 5; i++)
         {
             boom b;
             b.get_xy(x + 12 + 40 +60*i, y, i);
@@ -286,7 +287,7 @@ void Player::skill()
     {
         int x = p_x;
         int y = p_y;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 5; i++)
         {
             boom b;
             b.get_xy(x - 12 -40 -60*i, y, i);
@@ -298,7 +299,7 @@ void Player::skill()
     {
         int x = p_x;
         int y = p_y;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 5; i++)
         {
             boom b;
             b.get_xy(x - 12, y + 40 + 60 * i, i);
@@ -329,7 +330,8 @@ void Player::draw(SDL_Renderer* pRenderer)
     {
         TextureManager::Instance()->draw_player("player", p_x-map_x, p_y- map_y, 16 + 49 * Fame.die, 456, 22, 19, 46, 48, pRenderer, SDL_FLIP_NONE);
         SDL_Delay(50);
-        if( Fame.die <2) Fame.die++;
+        if (Fame.die < 2) Fame.die++;
+        else options::Instance()->get_game_over(1);
     }
     else 
     if (input_status.attack == 1)
@@ -903,7 +905,7 @@ void Enemy2::move()
         }
         else
         {
-            if (abs(p_y - e_y) <= 200 && abs(p_x - e_x) <= 330)
+            if (abs(p_y - e_y) <= 1000 && abs(p_x - e_x) <= 1000)
             {
                 if (p_y > e_y)
                 {
@@ -1082,7 +1084,7 @@ void Enemy2::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRen
         if (u.second != 1) continue;
         rect.x = rect.x - Map::Instance()->get().first;
         rect.y = rect.y - Map::Instance()->get().second;
-        SDL_RenderDrawRect(pRenderer, &rect);
+        //SDL_RenderDrawRect(pRenderer, &rect);
         SDL_Rect r2;
         int x_hitbox = u.first.x;
         int y_hitbox = u.first.y;
@@ -1096,7 +1098,7 @@ void Enemy2::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRen
         r2.y = y+10 - Map::Instance()->get().second;
         r2.w = w-10;
         r2.h = h;
-        SDL_RenderDrawRect(pRenderer, &r2);
+        //SDL_RenderDrawRect(pRenderer, &r2);
         //cout << e_x << " " << e_y << " " << e_h << " " << e_w << " | " << x_hitbox << " " << y_hitbox << " " << h_hitbox << " " << w_hitbox << "\n";
         if (y_hitbox <= y && y <= y_hitbox + h_hitbox)
         {

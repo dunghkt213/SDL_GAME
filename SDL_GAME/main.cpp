@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 	g_game->init(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	while (g_game->running())
 	{
-		g_game->handleEvents();
+		//g_game->handleEvents();
 		//g_game->update();
 		if (options::Instance()->check_reset() == 1)
 		{
@@ -32,7 +32,9 @@ int main(int argc, char* argv[])
 			Map::Instance()->reset();
 			options::Instance()->get_reset(0);
 		}
+		//cout << options::Instance()->check_poster() << "\n";
 		g_game->render();
+		g_game->handleEvents();
 		SDL_Delay(30);
 	}
 	g_game->clean();

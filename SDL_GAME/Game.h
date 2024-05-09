@@ -71,6 +71,8 @@ public:
 	//	return Boom.size();
 	//}
 	void reset();
+	void menu();
+	void menu_ingame();
 private:
 	int m_currentFrame;
 	SDL_Window* m_pWindow;

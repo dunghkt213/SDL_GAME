@@ -238,7 +238,7 @@ private:
 	int w = 70;
 	int h = 90;
 	int die = 0;
-	int delay = 150;
+	int delay = 50;
 	string status = "5_5_blood";
 public:
 	void set_vt(int x,int y)
