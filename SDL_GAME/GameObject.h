@@ -189,6 +189,102 @@ private:
 	vector<boom> vector_boom;
 };
 
+class Player2 : public GameObject
+{
+public:
+	static Player2* Instance()
+	{
+		if (Player2_Instance == 0)
+		{
+			Player2_Instance = new Player2();
+			return Player2_Instance;
+		}
+		return Player2_Instance;
+	}
+	void draw(SDL_Renderer* pRenderer);
+	void attack();
+	void move();
+	void resert();
+	void get(int x, int y);
+
+	pair<int, int> getxy()
+	{
+		pair<int, int>a;
+		a.first = p_x;
+		a.second = p_y;
+		return a;
+	}
+	void HandelInput(SDL_Event events, SDL_Renderer* screen);
+	void set_delay()
+	{
+		if (delay <= 0)
+		{
+			delay = 1;
+		}
+		delay--;
+	}
+	void set_delay_attack()
+	{
+		if (delay_attack <= 0)
+		{
+			delay_attack = 2;
+		}
+		delay_attack--;
+	}
+	void being_attack_block(vector<pair<SDL_Rect, SDL_Rect>> rect);
+	void check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer);
+	void skill();
+	int get_heart()
+	{
+		return heart;
+	}
+	int get_hp()
+	{
+		return hp;
+	}
+	bool check_die()
+	{
+		return die;
+	}
+	void reset();
+private:
+	static Player2* Player2_Instance;
+	int step = 46;
+	int non_move_mouse_right = 48;
+	int non_move_mouse_down = 0;
+	int non_move_mouse_up = 96;
+	int move_down = 162;
+	int move_right = 210;
+	int move_up = 260;
+	int attack_down = 308;
+	int attack_right = 336;
+	int attack_up = 384;
+	int die = 1;
+	int check_attack = 0;
+	int status;
+	int player_width = 15;
+	int player_height = 24;
+	bool being_attack = 0;
+	Input input_status;
+	int p_x = 100;
+	int p_y = 100;
+	int p_w = 46;
+	int p_h = 48;
+	fame Fame;
+	int dr_width = 30;
+	int dr_height = 50;
+	int hp = 4;
+	int delay = 0;
+	bool skill1 = 0;
+	int time_skill1 = 0;
+	bool skill2 = 0;
+	int time_skill2 = 0;
+	int delay_attack = 0;
+	bool intput_skill = 0;
+	bool check_hitbox = 0;
+	int heart = 4;
+	vector<boom> vector_boom;
+};
 
 class Enemy : public GameObject	
 {

@@ -10,6 +10,7 @@ private:
 	SDL_Renderer* m_pRenderer;
 	bool poster = 1;
 	bool game_over = 0;
+	int player = 1 ;
 public:
 	static options* Instance()
 	{
@@ -19,6 +20,10 @@ public:
 			return options_Instance;
 		}
 		return options_Instance;
+	}
+	int check_player()
+	{
+		return player;
 	}
 	bool check_game_over()
 	{
@@ -55,6 +60,10 @@ public:
 	void get_window(SDL_Window* Window)
 	{
 		this->m_pWindow = Window;
+	}
+	void get_player(int player)
+	{
+		this->player = player;
 	}
 	void get_renderer(SDL_Renderer* Renderer)
 	{

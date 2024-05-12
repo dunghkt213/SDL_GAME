@@ -145,6 +145,10 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	{
 		return false;
 	}
+	if (!TextureManager::Instance()->load("assets/player2.png", "player2", m_pRenderer))
+	{
+		return false;
+	}
 	enemy_house e_house;
 	e_house.set_vt(589, 18);
 	Enemy_house.push_back(e_house);
@@ -429,9 +433,14 @@ void Game::render()
 				Game::Instance()->clear_hitbox();
 				Player::Instance()->move();
 				Map::Instance()->Map_draw(m_pRenderer);
-				Player::Instance()->set_delay();
-				Player::Instance()->set_delay_attack();
-				Player::Instance()->draw(m_pRenderer);
+				if(options::Instance()->check_player() == 1) Player::Instance()->set_delay();
+				else Player2::Instance()->set_delay();
+
+				if (options::Instance()->check_player() == 1) 	Player::Instance()->set_delay_attack();
+				else Player2::Instance()->set_delay_attack();
+				if (options::Instance()->check_player() == 1) 	Player::Instance()->draw(m_pRenderer);
+				else Player2::Instance()->draw(m_pRenderer);
+
 				//cout << Boom.size() << " boom \n";
 				// 
 				//for (int i = 0; i < Game::Instance()->get_vector_boom().size(); i++)

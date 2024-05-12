@@ -16,6 +16,7 @@
 #define WALK_STOP 7;
 #define SPEED_ENEMY (int)3;
 Player* Player::Player_Instance = nullptr;
+Player2* Player2::Player2_Instance = nullptr;
 void GameObject::draw(SDL_Renderer* pRenderer)
 {
 	TextureManager::Instance()->drawFrame(m_textureID, m_x, m_y,
@@ -345,7 +346,7 @@ void Player::draw(SDL_Renderer* pRenderer)
             rect.x = p_x + 15;
             rect.y = p_y + 30;
             rect.w = 40;
-            rect.h = 30;
+            rect.h = 20;
             if (check_hitbox == 0) Game::Instance()->get_hitbox({ rect,1 });
             check_hitbox = 1;
             srcy = 336;
@@ -368,7 +369,7 @@ void Player::draw(SDL_Renderer* pRenderer)
             rect.y = p_y + 30;
             rect.w = 40;
             rect.h = 30;
-            check_hitbox = 1;
+            //SDL_RenderDrawRect(pRenderer, &rect);
             if (check_hitbox == 0)Game::Instance()->get_hitbox({ rect,1 });
             check_hitbox = 1;
             srcy = 288;
@@ -1117,4 +1118,117 @@ void Enemy2::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRen
 
 
     }
+}
+void Player2::draw(SDL_Renderer* pRenderer)
+{
+
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
+    if (die == 1)
+    {
+        TextureManager::Instance()->draw_player("player2", p_x - map_x, p_y - map_y, 98 + 303 * Fame.die, 1747, 64, 42 , 46, 48, pRenderer, SDL_FLIP_NONE);
+        SDL_Delay(50);
+        if (Fame.die < 2) Fame.die++;
+        else options::Instance()->get_game_over(1);
+    }
+    else
+        if (input_status.attack == 1)
+        {
+            int srcx = 46 * Fame.move_attack;
+            //if (Fame.move_attack == 2) skill();
+            int srcy = 336;
+            if (status == 2)
+            {
+                SDL_Rect rect;
+                rect.x = p_x + 15;
+                rect.y = p_y + 30;
+                rect.w = 40;
+                rect.h = 20;
+                if (check_hitbox == 0) Game::Instance()->get_hitbox({ rect,1 });
+                check_hitbox = 1;
+                srcy = 336;
+            }
+            else if (status == 4)
+            {
+                SDL_Rect rect;
+                rect.x = p_x - 25;
+                rect.y = p_y + 30;
+                rect.w = 40;
+                rect.h = 25;
+                if (check_hitbox == 0)Game::Instance()->get_hitbox({ rect,1 });
+                check_hitbox = 1;
+                srcy = 336;
+            }
+            else if (status == 3)
+            {
+                SDL_Rect rect;
+                rect.x = p_x;
+                rect.y = p_y + 30;
+                rect.w = 40;
+                rect.h = 30;
+                //SDL_RenderDrawRect(pRenderer, &rect);
+                if (check_hitbox == 0)Game::Instance()->get_hitbox({ rect,1 });
+                check_hitbox = 1;
+                srcy = 288;
+            }
+            else if (status == 1)
+            {
+                SDL_Rect rect;
+                rect.x = p_x + 5;
+                rect.y = p_y + 5;
+                rect.w = 20;
+                rect.h = 20;
+                if (check_hitbox == 0)Game::Instance()->get_hitbox({ rect,1 });
+                check_hitbox = 1;
+                srcy = 384;
+            }
+            if (delay_attack == 0) Fame.move_attack++;
+            if (Fame.move_attack >= 2)
+            {
+                Fame.move_attack = 1;
+                check_hitbox = 0;
+                input_status.attack = 0;
+            }
+            if (status == 4)
+            {
+                TextureManager::Instance()->draw_player("player2", p_x - map_x - 40, p_y - map_y - 40, srcx, srcy, 46, 48, 100, 100, pRenderer, SDL_FLIP_HORIZONTAL);
+            }
+            else
+            {
+                TextureManager::Instance()->draw_player("player2", p_x - map_x - 40, p_y - map_y - 40, srcx, srcy, 46, 48, 100, 100, pRenderer, SDL_FLIP_NONE);
+            }
+        }
+        else
+        {
+            if (status == 0)
+            {
+                TextureManager::Instance()->draw_player("player2", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_stop, 19, 18, 23, 35, 50, pRenderer, SDL_FLIP_NONE);
+                if (delay == 0) Fame.move_stop++;
+            }
+            else if (status == 2)
+            {
+
+                TextureManager::Instance()->draw_player("player2", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right, player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
+
+            }
+            else if (status == 4)
+            {
+                TextureManager::Instance()->draw_player("player2", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right, player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_HORIZONTAL);
+            }
+            else if (status == 3)
+            {
+                TextureManager::Instance()->draw_player("player2", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_down, move_down, player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
+            }
+            else if (status == 1)
+            {
+                TextureManager::Instance()->draw_player("player2", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_up, move_up, player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
+            }
+            Fame.check();
+        }
+
+    //if (Game::Instance()->get_vector_boom().size() > 0 && Game::Instance()->get_vector_boom()[0].check_done() != 1)
+    //{
+    //    Game::Instance()->get_vector_boom()[0].check_delay();
+    //    Game::Instance()->get_vector_boom()[0].run(pRenderer);
+    //}
 }
