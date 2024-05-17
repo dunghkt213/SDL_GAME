@@ -139,10 +139,14 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="gold.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="boom.cpp" />
     <ClCompile Include="options.cpp" />
+    <ClCompile Include="player2.cpp" />
+    <ClCompile Include="skill_thunder.cpp" />
+    <ClCompile Include="skill_tornado.cpp" />
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="tool.cpp" />
   </ItemGroup>
@@ -154,9 +158,14 @@
     <ClInclude Include="options.h" />
     <ClInclude Include="setup.h" />
     <ClInclude Include="boom.h" />
+    <ClInclude Include="skill_thunder.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="tool.h" />
+    <ClInclude Include="skill_tornado.h" />
     <ClInclude Include="Vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gold.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

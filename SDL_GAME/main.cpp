@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 {
 	srand(x);
 	g_game = new Game();
+	
 	g_game->init(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	while (g_game->running())
 	{
@@ -29,6 +30,7 @@ int main(int argc, char* argv[])
 			g_game->get_Renderer(options::Instance()->Renderer());
 			Game::Instance()->reset();
 			Player::Instance()->reset();
+			Player2::Instance()->reset();
 			Map::Instance()->reset();
 			options::Instance()->get_reset(0);
 		}

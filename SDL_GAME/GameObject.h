@@ -6,6 +6,9 @@
 #include<vector>
 #include"tool.h"
 #include"boom.h"
+#include"options.h"
+#include"skill_thunder.h"
+#include"skill_tornado.h";
 struct Input
 {
 	int left;
@@ -46,9 +49,19 @@ struct fame
 		{
 			move_left = 0;
 		}
-		if (move_right > 5)
+		if (options::Instance()->check_player() == 1)
 		{
-			move_right = 0;
+			if (move_right > 5)
+			{
+				move_right = 0;
+			}
+		}
+		else
+		{
+			if (move_right > 7)
+			{
+				move_right = 0;
+			}
 		}
 		if (move_up > 5)
 		{
@@ -66,9 +79,19 @@ struct fame
 		{
 			move_stop = 0;
 		}
-		if (move_being_attack > 5)
+		if (options::Instance()->check_player() == 1)
 		{
-			move_being_attack = 0;
+			if (move_being_attack > 5)
+			{
+				move_being_attack = 0;
+			}
+		}
+		else
+		{
+			if (move_being_attack > 7)
+			{
+				move_being_attack = 0;
+			}
 		}
 		//cout << " " << "move up" << " " << move_up << '\n';
 		//cout << " " << "move right" << " " << move_right << '\n';
@@ -137,6 +160,7 @@ public:
 	void being_attack_block(vector<pair<SDL_Rect, SDL_Rect>> rect);
 	void check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer);
 	void skill();
+	void draw_skill(SDL_Renderer* p_Renderer);
 	int get_heart()
 	{
 		return heart;
@@ -149,10 +173,34 @@ public:
 	{
 		return die;
 	}
+	void get_die(int die)
+	{
+		this->die = die;
+	}
 	void reset();
+	void skill2();
+	void avatar(int x,int y,SDL_Renderer* pRenderer)
+	{
+		TextureManager::Instance()->draw_player("player", x , y, 17+fame_avatar*48, 21,
+			16, 22, 33, 50, pRenderer, SDL_FLIP_NONE);
+		if (delay_avatar == 0)
+		{
+			fame_avatar++;
+			delay_avatar = 3;
+		}
+		delay_avatar--;
+		if (fame_avatar == 5)
+		{
+			fame_avatar = 0;
+		}
+
+	}
+	void skill3();
 private:
 	static Player* Player_Instance;
 	int step = 46;
+	int delay_avatar = 3;
+	int fame_avatar = 0;
 	int non_move_mouse_right = 48;
 	int non_move_mouse_down = 0;
 	int non_move_mouse_up = 96;
@@ -176,17 +224,23 @@ private:
 	fame Fame;
 	int dr_width = 30;
 	int dr_height = 50;
-	int hp = 4;
+	int hp = 5;
 	int delay = 0;
-	bool skill1 = 0;
-	int time_skill1 = 0;
-	bool skill2 = 0;
-	int time_skill2 = 0;
 	int delay_attack = 0;
 	bool intput_skill =0;
+	bool intput_skill2 = 0;
+	bool intput_skill3 = 0;
+	int time_skill=0;
+	int time_skill2=0;
+	int time_skill3 = 0;
+	bool unlock_skill1 = 0;
+	bool unlock_skill2 = 0;
+	bool unlock_skill3 = 0;
 	bool check_hitbox = 0;
-	int heart = 4;
+	int heart = 5;
 	vector<boom> vector_boom;
+	vector<skill_thunder>vector_thunder;
+	vector<skill_tornado>vector_tornado;
 };
 
 class Player2 : public GameObject
@@ -246,6 +300,10 @@ public:
 	{
 		return die;
 	}
+	void get_die(int die)
+	{
+		this->die = die;
+	}
 	void reset();
 private:
 	static Player2* Player2_Instance;
@@ -259,7 +317,7 @@ private:
 	int attack_down = 308;
 	int attack_right = 336;
 	int attack_up = 384;
-	int die = 1;
+	int die = 0;
 	int check_attack = 0;
 	int status;
 	int player_width = 15;
@@ -276,9 +334,7 @@ private:
 	int hp = 4;
 	int delay = 0;
 	bool skill1 = 0;
-	int time_skill1 = 0;
 	bool skill2 = 0;
-	int time_skill2 = 0;
 	int delay_attack = 0;
 	bool intput_skill = 0;
 	bool check_hitbox = 0;
@@ -304,7 +360,12 @@ public:
 		else return 0;
 	}
 	void spawn();
+	void get_gold(int gold)
+	{
+		this->gold = gold;
+	}
 private:
+	int gold = 0;
 	int time_die =20;
 	int e_w = 40;
 	int e_h = 40;
@@ -389,7 +450,14 @@ public:
 	{
 		this->src = s;
 	}
+	void get_gold(int gold)
+	{
+		this->gold = gold;
+	}
+	
 private:
+	
+	int gold = 0;
 	string src; 
 	int srcy = 27;
 	bool die_time = 0;

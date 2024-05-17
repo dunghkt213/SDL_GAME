@@ -11,7 +11,7 @@ void boom:: run (SDL_Renderer* pRenderer)
 	int map_x = Map::Instance()->get().first;
 	int map_y = Map::Instance()->get().second;
 	
-	TextureManager::Instance()->draw_player("boom", x - map_x , y - map_y , 34 + fame*195, 34, 120, 120, 60,60, pRenderer, SDL_FLIP_NONE);
+	TextureManager::Instance()->draw_player("boom", x - map_x , y - map_y , 34 + fame*195, 34, 120, 120, 80,80, pRenderer, SDL_FLIP_NONE);
 	if(delay ==0)this -> fame++;
 	//cout << x<<" "<<y<<" "<< fame<< "\n";
 	if (fame == 2 && check_boom == 0)

@@ -6,6 +6,9 @@
 #include"GameObject.h"
 #include"map.h"
 #include"boom.h"
+#include"gold.h"
+#include"skill_thunder.h"
+#include"skill_tornado.h"
 //#include"boom.h"
 class Game
 {
@@ -73,6 +76,23 @@ public:
 	void reset();
 	void menu();
 	void menu_ingame();
+	void get_gold(ani_Gold tgold)
+	{
+		Gold.push_back(tgold);
+	}
+	vector<ani_Gold>* get_Gold()
+	{
+		return &Gold;
+	}
+	void update_number_gold(int gold)
+	{
+		this->gold += gold;
+	}
+	int  get_number_gold()
+	{
+		return gold;
+	}
+	void draw_number(int x, int  y, int number);
 private:
 	int m_currentFrame;
 	SDL_Window* m_pWindow;
@@ -89,6 +109,12 @@ private:
 	vector<pair<SDL_Rect,int>>v;
 	vector<enemy_house> Enemy_house;
 	vector<int> heart;
+	int number_gold = 0;
+	int gold = 0;
+	int last_gold = 0;
+	vector<ani_Gold>Gold;
+	ani_Gold ugold;
+	skill_tornado tornado;
 	//vector<boom> Boom;
 	//boom b;
 	//vector<Enemy2> vector_enemy2;

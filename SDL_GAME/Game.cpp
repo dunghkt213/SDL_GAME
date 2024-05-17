@@ -149,6 +149,96 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	{
 		return false;
 	}
+	if (!TextureManager::Instance()->load("assets/gold.png", "gold", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/khung.png", "khung", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/ava_gold.png", "ava_gold", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/1.png", "1", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/2.png", "2", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/3.png", "3", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/4.png", "4", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/5.png", "5", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/6.png", "6", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/7.png", "7", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/8.png", "8", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/9.png", "9", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/0.png", "0", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/skill_thunder.png", "skill_thunder", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/tornado.png", "tornado", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/ava_skill1.png", "ava_skill1", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/ava_skill2.png", "ava_skill2", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/ava_skill3.png", "ava_skill3", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/font_z.png", "font_z", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/font_x.png", "font_x", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/font_c.png", "font_c", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/font_v.png", "font_v", m_pRenderer))
+	{
+		return false;
+	}
+
+	ugold.get_xy(100, 100);
 	enemy_house e_house;
 	e_house.set_vt(589, 18);
 	Enemy_house.push_back(e_house);
@@ -248,7 +338,7 @@ void Game::handleEvents()
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 	SDL_Event event;
-	if (SDL_PollEvent(&event))
+	while (SDL_PollEvent(&event))
 	{
 		if(event.type == SDL_QUIT)
 		{
@@ -271,12 +361,13 @@ void Game::handleEvents()
 			}
 			if (event.key.keysym.sym == SDLK_p)
 			{
-				if (options::Instance()->check_pause() == 1)
+				cout << "p";
+				if (options::Instance()->check_pause() == 1 )
 				{
 
 					options::Instance()->get_pause(0);
 				}
-				else
+				else if (options::Instance()->check_pause() == 0 && options::Instance()->check_game_over() == 0)
 				{
 					options::Instance()->get_pause(1);
 				}
@@ -285,7 +376,8 @@ void Game::handleEvents()
 			{
 				options::Instance()->get_pause(1);
 			}
-			Player::Instance()->HandelInput(event, m_pRenderer);
+			if(options:: Instance()->check_player()==1) Player::Instance()->HandelInput(event, m_pRenderer);
+			else Player2::Instance()->HandelInput(event, m_pRenderer);
 		}
 	}
 	
@@ -335,6 +427,8 @@ void Game::menu_ingame()
 				94, 30, 90, 40, m_pRenderer, SDL_FLIP_NONE);
 			options::Instance()->get_poster(1);
 			options::Instance()->get_pause(0);
+			Player2::Instance()->get_die(0);
+			Player::Instance()->get_die(0);
 			options::Instance()->get_reset(1);
 		}
 		else
@@ -431,7 +525,8 @@ void Game::render()
 				SDL_RenderClear(m_pRenderer); // clear to the draw colour
 				// loop through our objects and draw them
 				Game::Instance()->clear_hitbox();
-				Player::Instance()->move();
+				if (options::Instance()->check_player() == 1)Player::Instance()->move();
+				else Player2::Instance()->move();
 				Map::Instance()->Map_draw(m_pRenderer);
 				if(options::Instance()->check_player() == 1) Player::Instance()->set_delay();
 				else Player2::Instance()->set_delay();
@@ -478,19 +573,22 @@ void Game::render()
 						if (rand() % 2 == 0)
 						{
 							Enemy e;
+							number_gold++;
+							e.get_gold(number_gold);
 							e.set_vt(e_x, e_y);
 							vector_enemy.push_back(e);
 						}
 						else
 						{
 							Enemy2 e;
+							number_gold++;
+							e.get_gold(number_gold);
 							e.set_vt(e_x, e_y);
 							vector_enemy2.push_back(e);
 						}
 					}
 					Enemy_house[i].run_delay();
 				}
-
 				//for (int i = 0; i < vector_enemy2.size(); i++)
 				//{
 				//	vector_enemy2[i].set_delay();
@@ -524,6 +622,19 @@ void Game::render()
 						vector_enemy2.erase(vector_enemy2.begin() + i);
 					}
 				}
+				int map_x = Map::Instance()->get().first;
+				int map_y = Map::Instance()->get().second;
+				for (int i = 0; i < Game::Instance()->get_Gold()->size(); i++)
+				{
+					//cout << "ingold \n";
+					std::vector<ani_Gold>* goldVector = Game::Instance()->get_Gold();
+					(*goldVector)[i].draw(m_pRenderer);
+					if ((*goldVector)[i].check_done() == 1)
+					{
+						(*goldVector).erase((*goldVector).begin() + i);
+					}
+				}
+				//if(ugold.check_done()!=1) ugold.draw(m_pRenderer);
 				//SDL_Rect rect;
 				//rect.x = 200;
 				//rect.y = 280;
@@ -541,7 +652,7 @@ void Game::render()
 				//v.push_back({ rect,1 });
 				int x, y;
 				SDL_GetMouseState(&x, &y);
-				cout << x << " " << y << "\n";
+				//cout << x << " " << y << "\n";
 				SDL_Event event1;
 				if (y >= 5 && y <= 35 && x >= 660 && x <= 690)
 				{
@@ -558,19 +669,63 @@ void Game::render()
 				}
 				else TextureManager::Instance()->draw_player("setting", 660, 5, 288, 32,
 					30, 30, 30, 30, m_pRenderer, SDL_FLIP_NONE);
-				Player::Instance()->check_being_attack(Game::Instance()->hitbox(), m_pRenderer);
-				int check_heart = Player::Instance()->get_heart();
-				int hp = Player::Instance()->get_hp();
-				for (int i = 0; i < Player::Instance()->get_heart(); i++)
+				if (options::Instance()->check_player() == 1) 	Player::Instance()->check_being_attack(Game::Instance()->hitbox(), m_pRenderer);
+				else Player2::Instance()->check_being_attack(Game::Instance()->hitbox(), m_pRenderer);
+				int check_heart;
+				if (options::Instance()->check_player() == 1) 	check_heart = Player::Instance()->get_heart();
+				else check_heart = Player2::Instance()->get_heart();
+				int hp;
+				if (options::Instance()->check_player() == 1) 	hp=Player::Instance()->get_hp();
+				else hp = Player2::Instance()->get_hp();
+
+
+				TextureManager::Instance()->draw_player("khung", 3, 3, 0, 0,
+					177, 183, 220, 60, m_pRenderer, SDL_FLIP_NONE);
+				TextureManager::Instance()->draw_player("khung", 3, 3, 0, 0,
+					177, 183, 55, 58, m_pRenderer, SDL_FLIP_NONE);
+				Player::Instance()->avatar(15, 7, m_pRenderer);
+
+				TextureManager::Instance()->draw_player("ava_gold",90 ,35, 0, 0,
+					41, 46, 25, 25, m_pRenderer, SDL_FLIP_NONE);
+				if (Game::Instance()->get_number_gold() > last_gold)
 				{
-					int y = 9;
-					int x = 5 + 30 * i;
-					if (hp > 0) TextureManager::Instance()->draw_player("heart", x, y, 0, 0,
-						45, 45, 28, 28, m_pRenderer, SDL_FLIP_NONE);
-					else TextureManager::Instance()->draw_player("no_heart", x, y, 0, 0,
-						45, 45, 28, 28, m_pRenderer, SDL_FLIP_NONE);
-					hp--;
+					last_gold++;
+					draw_number(86, 42, last_gold);
 				}
+				else if (Game::Instance()->get_number_gold() < last_gold)
+					{
+						last_gold--;
+						draw_number(86, 42, last_gold);
+					}
+				else draw_number(86, 42, last_gold);
+				//draw_number(86, 42, 0);
+				if (options::Instance()->check_player() == 1)
+				{
+					for (int i = 0; i < Player::Instance()->get_heart(); i++)
+					{
+						int y = 9;
+						int x = 63 + 30 * i;
+						if (hp > 0) TextureManager::Instance()->draw_player("heart", x, y, 0, 0,
+							45, 45, 24, 24, m_pRenderer, SDL_FLIP_NONE);
+						else TextureManager::Instance()->draw_player("no_heart", x, y, 0, 0,
+							45, 45, 24, 24, m_pRenderer, SDL_FLIP_NONE);
+						hp--;
+					}
+				}
+				else
+				{
+					for (int i = 0; i < Player2::Instance()->get_heart(); i++)
+					{
+						int y = 9;
+						int x = 63 + 30 * i;
+						if (hp > 0) TextureManager::Instance()->draw_player("heart", x, y, 0, 0,
+							45, 45, 28, 28, m_pRenderer, SDL_FLIP_NONE);
+						else TextureManager::Instance()->draw_player("no_heart", x, y, 0, 0,
+							45, 45, 28, 28, m_pRenderer, SDL_FLIP_NONE);
+						hp--;
+					}
+				}
+				Player::Instance()->draw_skill(m_pRenderer);
 			}
 			
 		}
@@ -608,12 +763,12 @@ void Game::waitUntilKeyPressed()
 		SDL_Delay(16);
 	}
 }
+ 
 void Game::load_data()
 {
 	enemy_house e_house;
 	e_house.set_vt(589, 18);
 	Enemy_house.push_back(e_house);
-	cout << "co";
 	e_house.set_vt(263, 609);
 	Enemy_house.push_back(e_house);
 	e_house.set_vt(819, 350);
@@ -626,4 +781,25 @@ void Game::load_data()
 	Enemy_house.push_back(e_house);
 	e_house.set_vt(1764, 91);
 	Enemy_house.push_back(e_house);
+}
+void Game::draw_number(int x, int  y, int number)
+{
+	if (number == 0)
+	{
+		x -= 9;
+		TextureManager::Instance()->draw_player("0", x, y, 0, 0,
+			21, 30, 11, 15, m_pRenderer, SDL_FLIP_NONE);
+	}
+	while (number > 0)
+	{
+		int u = number % 10;
+		number=number / 10;
+		string s;
+		s = u + 48;
+		x -= 9;
+		//cout << "number" << " " << s << "\n";
+		TextureManager::Instance()->draw_player(s, x, y, 0, 0,
+			21, 30, 11, 15, m_pRenderer, SDL_FLIP_NONE);
+	}
+
 }
