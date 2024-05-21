@@ -1,5 +1,7 @@
 #pragma once
 #include<SDL.h>
+#include<SDL_mixer.h>
+#include"sound.h"
 class options
 {
 private:
@@ -14,6 +16,7 @@ private:
 	int player = 1 ;
 	bool boss = 0;
 	bool victory = 0;
+
 public:
 	static options* Instance()
 	{
@@ -82,6 +85,7 @@ public:
 	}
 	void get_game_over(int x)
 	{
+		if (x == 1) sound::Instance()->play_sound("lose");
 		this->game_over = x;
 	}
 	void get_window(SDL_Window* Window)

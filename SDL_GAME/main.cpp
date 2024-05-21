@@ -10,7 +10,7 @@ using namespace std;
 Game* g_game = 0;
 const int SCREEN_WIDTH =700;
 const int SCREEN_HEIGHT = 500;
-const char* WINDOW_TITLE = "Hello World!";
+const char* WINDOW_TITLE = "Mystic_Woods";
 int x = time(0);
 int main(int argc, char* argv[])
 {

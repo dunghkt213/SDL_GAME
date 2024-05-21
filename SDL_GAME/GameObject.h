@@ -10,6 +10,7 @@
 #include"skill_thunder.h"
 #include"skill_tornado.h";
 #include"boss_skill.h"
+#include"sound.h"
 struct Input
 {
 	int left;
@@ -221,11 +222,17 @@ public:
 	{
 		return unlock_skill3;
 	}
+	void get_sound_attack(int x)
+	{
+		sound_atack = x;
+	}
 
 private:
 	static Player* Player_Instance;
 	int step = 46;
+	int time_being_attack = 0;
 	int delay_avatar = 3;
+	bool sound_atack = 0;
 	int fame_avatar = 0;
 	int non_move_mouse_right = 48;
 	int non_move_mouse_down = 0;

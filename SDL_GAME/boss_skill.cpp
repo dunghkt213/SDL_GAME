@@ -19,7 +19,7 @@ void boss_skill::draw(SDL_Renderer* pRenderer)
 	if (status == 4)
 	{
 		TextureManager::Instance()->draw_player("tornado", x - map_x, y - map_y, 351 + fame * 32, 164,
-			32, 23, 40, 50, pRenderer, SDL_FLIP_NONE);
+			32, 23, 50, 60, pRenderer, SDL_FLIP_NONE);
 		rect.x = x + 5 ;
 		rect.y = y+10 ;
 		rect.w = 30;
@@ -28,7 +28,7 @@ void boss_skill::draw(SDL_Renderer* pRenderer)
 	else
 	{
 		TextureManager::Instance()->draw_player("tornado", x - map_x, y - map_y, 351 + fame * 32, 164,
-			32, 23, 40, 50, pRenderer, SDL_FLIP_HORIZONTAL);
+			32, 23, 50, 60, pRenderer, SDL_FLIP_HORIZONTAL);
 		rect.x = x + 7 ;
 		rect.y = y+10 ;
 		rect.w = 26;

@@ -17,6 +17,7 @@ private:
 	int delay = 0;
 	bool done = 0;
 	bool check_boom = 0;
+	bool check_sound = 0;
 public:
 	void get_xy(int x,int y,int delay_fame)
 	{
@@ -28,7 +29,7 @@ public:
 	{
 		fame++;
 	}
-	void run(SDL_Renderer* pRenderer);
+	void run(SDL_Renderer* pRenderer,int i);
 	void check_delay();
 	bool check_done()
 	{

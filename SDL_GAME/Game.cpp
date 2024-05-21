@@ -1,5 +1,6 @@
 #include"Game.h"
 #include<vector>
+#include"sound.h"
 #include"options.h"
 Game* Game::Game_Instance = nullptr;
 //void Game::draw()
@@ -22,6 +23,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
 {
 	// attempt to initialize SDL
+	sound::Instance()->init();
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
 		std::cout << "SDL init success\n";
@@ -310,6 +312,18 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	{
 		return false;
 	}
+	//sound
+	sound::Instance()->loadSound("assets/attack.mp3", "attack");
+	sound::Instance()->loadSound("assets/attack_enemy_house.mp3", "attack_enemy_house");
+	sound::Instance()->loadSound("assets/collect_gold.mp3", "collect_gold");
+	sound::Instance()->loadSound("assets/spray.mp3", "spray");
+	sound::Instance()->loadSound("assets/thunder.mp3", "thunder");
+	sound::Instance()->loadSound("assets/tornado.mp3", "tornado");
+	sound::Instance()->loadSound("assets/unlock_skill.mp3", "unlock_skill");
+	sound::Instance()->loadSound("assets/lose.mp3", "lose");
+	sound::Instance()->loadSound("assets/boom.mp3", "boom");
+	sound::Instance()->loadSound("assets/hurt.mp3", "hurt");
+	sound::Instance()->loadSound("assets/heal.mp3", "heal");
 	ugold.get_xy(100, 100);
 	enemy_house e_house;
 	e_house.set_vt(589, 18);
@@ -326,6 +340,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	Enemy_house.push_back(e_house);
 	e_house.set_vt(1764, 91);
 	Enemy_house.push_back(e_house);
+
 	//for (int i = 1; i <= 100; i++)
 	//{
 	//	Enemy e;
@@ -355,6 +370,7 @@ void Game::menu()
 
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 300, 40, 128, 1,
 				62, 30, 115, 50, m_pRenderer, SDL_FLIP_NONE);
 			options::Instance()->get_poster(0);
@@ -373,6 +389,7 @@ void Game::menu()
 
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 300, 95, 320, 352,
 				62, 30, 115, 50, m_pRenderer, SDL_FLIP_NONE);
 		}
@@ -390,6 +407,7 @@ void Game::menu()
 
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 300, 150, 128, 192,
 				62, 30, 115, 50, m_pRenderer, SDL_FLIP_NONE);
 			m_bRunning = 0;
@@ -490,6 +508,7 @@ void Game::menu_ingame()
 
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 322, 170, 576, 128,
 				94, 30, 90, 40, m_pRenderer, SDL_FLIP_NONE);
 			options::Instance()->get_pause(0);
@@ -505,6 +524,7 @@ void Game::menu_ingame()
 
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 322, 215, 320, 352,
 				62, 30, 90, 35, m_pRenderer, SDL_FLIP_NONE);
 		}
@@ -519,6 +539,7 @@ void Game::menu_ingame()
 
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 322, 255, 576, 192,
 				94, 30, 90, 40, m_pRenderer, SDL_FLIP_NONE);
 			options::Instance()->get_poster(1);
@@ -538,6 +559,7 @@ void Game::menu_ingame()
 
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 322, 300, 544,32,
 				78, 30, 90, 40, m_pRenderer, SDL_FLIP_NONE);
 			options::Instance()->get_reset(1);
@@ -554,19 +576,71 @@ void Game::menu_ingame()
 void Game::reset()
 {
 	Game_Instance = nullptr;
+
 }
 void Game::update()
 {
 }
+void Game::victory_menu()
+{
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+	SDL_Event event1;
+	if (y >= 230 && y <= 290 && x >= 250 && x <= 310)
+	{
+
+		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
+		{
+			sound::Instance()->play_sound("spray");
+			TextureManager::Instance()->draw_player("setting", 250, 230, 64, 32,
+				30, 30, 60, 60, m_pRenderer, SDL_FLIP_NONE);
+			options::Instance()->get_reset(1);
+			options::Instance()->get_victory(0);
+		}
+		else TextureManager::Instance()->draw_player("setting", 250, 230, 32, 32,
+				30, 30, 60, 60, m_pRenderer, SDL_FLIP_NONE);
+	}
+	else TextureManager::Instance()->draw_player("setting", 250, 230, 0, 32,
+		30, 30, 60, 60, m_pRenderer, SDL_FLIP_NONE);
+
+	if (x >= 390 && x <= 450 && y >= 230 && y <= 290)
+	{
+
+		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
+		{
+			sound::Instance()->play_sound("spray");
+			TextureManager::Instance()->draw_player("setting", 390, 230, 352, 0,
+				30, 30, 60, 60, m_pRenderer, SDL_FLIP_NONE);
+			options::Instance()->get_poster(1);
+			options::Instance()->get_victory(0);
+		}
+		else TextureManager::Instance()->draw_player("setting", 390, 230, 320, 0,
+			30, 30, 60, 60, m_pRenderer, SDL_FLIP_NONE);
+	}
+	else TextureManager::Instance()->draw_player("setting", 390, 230, 288, 0,
+		30, 30, 60, 60, m_pRenderer, SDL_FLIP_NONE);
+
+}
+
 void Game::render()
 {
-	if (options::Instance()->check_poster() == 1)
+	if (options::Instance()->check_poster() == 1 || options::Instance()->check_victory()==1)
 	{
-		SDL_RenderClear(m_pRenderer);
-		TextureManager::Instance()->draw_player("p", 0, 0,0 ,0,
-			1280, 640, 700, 500, m_pRenderer, SDL_FLIP_NONE);
-		menu();
-		SDL_RenderPresent(m_pRenderer);
+		if (options::Instance()->check_victory()==1)
+		{
+			TextureManager::Instance()->draw_player("victory", 210, 130, 0, 0,
+				262, 81, 280, 81, m_pRenderer, SDL_FLIP_NONE);
+			SDL_RenderPresent(m_pRenderer);
+			victory_menu();
+		}
+		else
+		{
+			SDL_RenderClear(m_pRenderer);
+			TextureManager::Instance()->draw_player("p", 0, 0, 0, 0,
+				1280, 640, 700, 500, m_pRenderer, SDL_FLIP_NONE);
+			menu();
+			SDL_RenderPresent(m_pRenderer);
+		}
 	}
 	else
 	{
@@ -586,6 +660,7 @@ void Game::render()
 
 					if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 					{
+						sound::Instance()->play_sound("spray");
 						TextureManager::Instance()->draw_player("menu", 312, 200, 544, 32,
 							78, 30, 80, 40, m_pRenderer, SDL_FLIP_NONE);
 						options::Instance()->get_reset(1);
@@ -602,6 +677,7 @@ void Game::render()
 
 					if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 					{
+						sound::Instance()->play_sound("spray");
 						TextureManager::Instance()->draw_player("menu", 312, 245, 576, 192,
 							94, 30, 80, 40, m_pRenderer, SDL_FLIP_NONE);
 						options::Instance()->get_poster(1);
@@ -691,16 +767,17 @@ void Game::render()
 					Boss.move();
 					Boss.draw(m_pRenderer);
 					Boss.check_being_attack(Game::Instance()->hitbox(), m_pRenderer);
+					if(delay_enemy_boss ==0) TextureManager::Instance()->draw_player("victory", 660, 5, 288, 32,
+						30, 30, 30, 30, m_pRenderer, SDL_FLIP_NONE);
+					if (delay_enemy_boss <= 0)
+					{
+						delay_enemy_boss = 50;
+					}
+					delay_enemy_boss--;
 					if (Boss.check_done() == 1)
 					{
-						if(delay_enemy_boss ==0)TextureManager::Instance()->draw_player("victory", 660, 5, 288, 32,
-							30, 30, 30, 30, m_pRenderer, SDL_FLIP_NONE);
-						if (delay_enemy_boss <= 0)
-						{
-							delay_enemy_boss = 50;
-						}
-						delay_enemy_boss--;
-
+						sound::Instance()->play_sound("victory");
+						options::Instance()->get_victory(1);
 					}
 				}
 				//for (int i = 0; i < vector_enemy2.size(); i++)
@@ -745,6 +822,7 @@ void Game::render()
 					(*goldVector)[i].draw(m_pRenderer);
 					if ((*goldVector)[i].check_done() == 1)
 					{
+						sound::Instance()->play_sound("collect_gold");
 						(*goldVector).erase((*goldVector).begin() + i);
 					}
 				}
@@ -773,6 +851,7 @@ void Game::render()
 
 					if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 					{
+						sound::Instance()->play_sound("spray");
 						TextureManager::Instance()->draw_player("setting", 660, 5, 352, 32,
 							30, 30, 30, 30, m_pRenderer, SDL_FLIP_NONE);
 						options::Instance()->get_pause(1);
@@ -864,6 +943,7 @@ void Game::clean()
 {
 	std::cout << "cleaning game\n";
 	m_bRunning = 0;
+	Mix_Quit();
 	SDL_DestroyWindow(m_pWindow);
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_Quit();
@@ -1016,6 +1096,7 @@ void Game::market()
 	{
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
 		{
+			sound::Instance()->play_sound("spray");
 			options::Instance()->get_market(0);
 		}
 	}
@@ -1024,6 +1105,7 @@ void Game::market()
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT 
 			&& Game::Instance()->get_number_gold()>= 10 && Player::Instance()->check_unlock_skill1()==0)
 		{
+			sound::Instance()->play_sound("unlock_skill");
 			Player::Instance()->Unlock_skill1();
 			Game::Instance()->update_number_gold(-10);
 		}
@@ -1033,6 +1115,7 @@ void Game::market()
 		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT 
 			&& Game::Instance()->get_number_gold() >= 10 && Player::Instance()->check_unlock_skill2() == 0)
 		{
+			sound::Instance()->play_sound("unlock_skill");
 			Player::Instance()->Unlock_skill2();
 			Game::Instance()->update_number_gold(-10);
 		}
@@ -1042,6 +1125,7 @@ void Game::market()
 		if(SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT 
 			&& Game::Instance()->get_number_gold() >= 10 && Player::Instance()->check_unlock_skill3() == 0)
 		{
+			sound::Instance()->play_sound("unlock_skill");
 			Player::Instance()->Unlock_skill3();
 			Game::Instance()->update_number_gold(-10);
 		}

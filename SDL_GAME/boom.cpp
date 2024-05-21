@@ -6,7 +6,7 @@
 #include"TextManager.h"
 #include"Game.h"
 #include"map.h"
-void boom:: run (SDL_Renderer* pRenderer)
+void boom:: run (SDL_Renderer* pRenderer,int i)
 {
 	int map_x = Map::Instance()->get().first;
 	int map_y = Map::Instance()->get().second;
@@ -16,6 +16,7 @@ void boom:: run (SDL_Renderer* pRenderer)
 	//cout << x<<" "<<y<<" "<< fame<< "\n";
 	if (fame == 2 && check_boom == 0)
 	{
+		if(i<3) sound::Instance()->play_sound("boom");
 		check_boom = 1;
 		SDL_Rect rect;
 		rect.x = x +10;

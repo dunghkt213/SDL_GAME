@@ -476,18 +476,21 @@ void Player::draw(SDL_Renderer* pRenderer)
     if (intput_skill3 == 1 && time_skill3 == 0 && unlock_skill3 == 1)
     {
         skill3();
+        sound::Instance()->play_sound("tornado");
         time_skill3 = 100;
     }
     intput_skill3 = 0;
     if (intput_skill2 == 1 && time_skill2==0 && unlock_skill2 == 1)
     {
         skill2();
+        sound::Instance()->play_sound("thunder");
         time_skill2 = 100;
     }
     intput_skill2 = 0;
     if (intput_heal == 1 && time_heal == 0  && hp<5)
     {
-        hp = min(hp + 2, 5);
+        sound::Instance()->play_sound("heal");
+        hp = min(hp + 3, 5);
         time_heal = 1000;
     }
     intput_heal = 0;
@@ -513,7 +516,7 @@ void Player::draw(SDL_Renderer* pRenderer)
     {
 	    //Game::Instance()->get_vector_boom()[i].plus_fame();
 	    vector_boom[i].check_delay();
-        vector_boom[i].run(pRenderer);
+        vector_boom[i].run(pRenderer,i);
 	    if (vector_boom[i].check_done() == 1)
 	    {
 		    vector_boom.erase(vector_boom.begin() + i);
@@ -545,6 +548,13 @@ void Player::draw(SDL_Renderer* pRenderer)
     else 
     if (input_status.attack == 1)
     {
+        if (Fame.move_attack == 1 && sound_atack==0)
+        {
+            sound::Instance()->play_sound("attack");
+            sound_atack = 1;
+
+        }
+
         int srcx = 46 * Fame.move_attack;
         //if (Fame.move_attack == 2) skill();
         int srcy = 336;
@@ -597,6 +607,7 @@ void Player::draw(SDL_Renderer* pRenderer)
         if (Fame.move_attack >=2 )
         {
             Fame.move_attack = 1;
+            sound_atack = 0;
             check_hitbox = 0;
             input_status.attack = 0;
         }
@@ -613,26 +624,26 @@ void Player::draw(SDL_Renderer* pRenderer)
     {
         if (status == 0)
         {
-            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_stop, 19, 18, 23, 35, 50, pRenderer, SDL_FLIP_NONE);
+            if(time_being_attack %2==0 )TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_stop, 19, 18, 23, 35, 50, pRenderer, SDL_FLIP_NONE);
             if(delay==0) Fame.move_stop++;
         }
         else if (status == 2)
         {
 
-            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right , player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
+            if (time_being_attack % 2 == 0)TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right , player_width, player_height, dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
 
         }
         else if (status == 4)
         {
-            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_HORIZONTAL);
+            if (time_being_attack % 2 == 0)TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_right, move_right, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_HORIZONTAL);
         }
         else if (status == 3)
         {
-            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_down, move_down, player_width, player_height,  dr_width, dr_height,pRenderer, SDL_FLIP_NONE);
+            if (time_being_attack % 2 == 0) TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_down, move_down, player_width, player_height,  dr_width, dr_height,pRenderer, SDL_FLIP_NONE);
         }
         else if (status == 1)
         {
-            TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_up, move_up, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
+            if (time_being_attack % 2 == 0) TextureManager::Instance()->draw_player("player", p_x - map_x, p_y - map_y, 16 + 48 * Fame.move_up, move_up, player_width, player_height,  dr_width, dr_height, pRenderer, SDL_FLIP_NONE);
         }
         Fame.check();
     }
@@ -718,6 +729,11 @@ void Player :: draw_skill(SDL_Renderer* pRenderer)
 }
 void Player::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer)
 {
+    if (time_being_attack > 0)
+    {
+        time_being_attack--;
+        return;
+    }
     for (pair<SDL_Rect, int> u : v)
     {
         SDL_Rect rect = u.first;
@@ -746,6 +762,8 @@ void Player::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRe
             {
                 being_attack = 1;
                 hp -= 1;
+                time_being_attack = 7;
+                sound::Instance()->play_sound("hurt");
                 if (hp <= 0)
                 {
                     die = 1;
@@ -758,6 +776,8 @@ void Player::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRe
             {
                 being_attack = 1;
                 hp -= 1;
+                time_being_attack = 7;
+                sound::Instance()->play_sound("hurt");
                 if (hp <= 0)
                 {
                     die = 1;
@@ -1109,6 +1129,7 @@ void enemy_house::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer
             if ((e_x + e_w >= x_hitbox && e_x <= x_hitbox) || (x_hitbox <= e_x && x_hitbox + w_hitbox >= e_x))
             {           
                 hp -= 1;
+                sound::Instance()->play_sound("attack_enemy_house");
                 check = 1;
                 if (hp == 1) status = "1_5_blood";
                 if (hp == 2) status = "2_5_blood";
@@ -1125,6 +1146,7 @@ void enemy_house::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer
                 if ((e_x + e_w >= x_hitbox && e_x <= x_hitbox) || (x_hitbox <= e_x && x_hitbox + w_hitbox >= e_x))
                 {
                     hp -= 1;
+                    sound::Instance()->play_sound("attack_enemy_house");
                     check = 1;
                     if (hp == 1) status = "1_5_blood";
                     if (hp == 2) status = "2_5_blood";

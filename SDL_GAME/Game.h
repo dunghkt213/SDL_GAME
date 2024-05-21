@@ -9,6 +9,7 @@
 #include"gold.h"
 #include"skill_thunder.h"
 #include"skill_tornado.h"
+#include <SDL_mixer.h>
 //#include"boom.h"
 class Game
 {
@@ -73,6 +74,7 @@ public:
 	//{
 	//	return Boom.size();
 	//}
+	void victory_menu();
 	void reset();
 	void menu();
 	void menu_ingame();
