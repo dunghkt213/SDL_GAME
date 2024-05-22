@@ -434,10 +434,14 @@ private:
 	bool check_gold = 1;
 	string status = "5_5_blood";
 public:
-	void set_vt(int x,int y)
+	void set_vt(int x, int y)
 	{
 		this->x = x;
 		this->y = y;
+	}
+	void get_delay(int x)
+	{
+		this->delay = x;
 	}
 	bool check_die()
 	{
@@ -455,9 +459,21 @@ public:
 	}
 	void run_delay()
 	{
+		cout << delay <<"\n";
 		if (delay <= 0)
 		{
-			delay = 150;
+			if (options::Instance()->check_level() == -1)
+			{
+				delay = 200;
+			}
+			if (options::Instance()->check_level() == 0)
+			{
+				delay = 150;
+			}
+			if (options::Instance()->check_level() == 1)
+			{
+				delay = 30;
+			}
 		}
 		delay--;
 	}

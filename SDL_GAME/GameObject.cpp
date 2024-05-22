@@ -787,6 +787,7 @@ void Player::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRe
         
     }
 }
+
 void Enemy::move()
 {
     if (attack != 1 && being_attack!=1 && die!=1 && Player::Instance()->check_die() == 0)
@@ -840,6 +841,7 @@ void Enemy::move()
    
 
 }
+
 void Enemy::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRenderer)
 {
     for (pair<SDL_Rect, int> u  : v)
@@ -892,6 +894,7 @@ void Enemy::check_being_attack(vector<pair<SDL_Rect, int>> v,SDL_Renderer* pRend
 
     }
 }
+
 void Enemy::draw(SDL_Renderer* pRenderer)
 {
     
@@ -1050,6 +1053,7 @@ void Enemy::draw(SDL_Renderer* pRenderer)
         }
   
 }
+
 void Enemy:: set_delay()
 {
     if (delay <= 0)
@@ -1059,6 +1063,7 @@ void Enemy:: set_delay()
     delay--;
     
 }
+
 void Enemy :: spawn()
 {
     int map_x = Map::Instance()->get().first;
@@ -1075,6 +1080,24 @@ void Enemy :: spawn()
     }
     
 }
+
+void Enemy2::spawn()
+{
+    int map_x = Map::Instance()->get().first;
+    int map_y = Map::Instance()->get().second;
+    if (rand() % 2 == 0)
+    {
+        this->e_x = map_x + 700 + rand() % 6;
+        this->e_y = map_y + rand() % 500;
+    }
+    else
+    {
+        this->e_x = map_x - 30;
+        this->e_y = map_y + rand() % 500;
+    }
+
+}
+
 void enemy_house::draw(SDL_Renderer* pRenderer)
 {
     int map_x = Map::Instance()->get().first;
@@ -1089,16 +1112,41 @@ void enemy_house::draw(SDL_Renderer* pRenderer)
             src_w, src_h, w, h, pRenderer, SDL_FLIP_NONE);
         if (check_gold == 1)
         {
-            ani_Gold tgold;
-            tgold.get_xy(x, y);
-            Game::Instance()->get_gold(tgold);
-            tgold.get_xy(x+9, y);
-            Game::Instance()->get_gold(tgold);
-            check_gold = 0;
+            if (options::Instance()->check_level() == -1)
+            {
+                ani_Gold tgold;
+                tgold.get_xy(x, y);
+                Game::Instance()->get_gold(tgold);
+                tgold.get_xy(x + 9, y);
+                Game::Instance()->get_gold(tgold);
+                check_gold = 0;
+                tgold.get_xy(x, y+25);
+                Game::Instance()->get_gold(tgold);
+                tgold.get_xy(x + 9, y+25);
+                Game::Instance()->get_gold(tgold);
+                check_gold = 0;
+            }
+            if (options::Instance()->check_level() == 0)
+            {
+                ani_Gold tgold;
+                tgold.get_xy(x, y);
+                Game::Instance()->get_gold(tgold);
+                tgold.get_xy(x + 9, y);
+                Game::Instance()->get_gold(tgold);
+                check_gold = 0;
+            }
+            if (options::Instance()->check_level() == 1)
+            {
+                ani_Gold tgold;
+                tgold.get_xy(x, y);
+                Game::Instance()->get_gold(tgold);
+                check_gold = 0;
+            }
         }
     }
 
 }
+
 void enemy_house::check_being_attack(vector<pair<SDL_Rect, int>> v, SDL_Renderer* pRenderer)
 {
     for (pair<SDL_Rect, int> u : v)

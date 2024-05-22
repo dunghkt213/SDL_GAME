@@ -16,7 +16,9 @@ private:
 	int player = 1 ;
 	bool boss = 0;
 	bool victory = 0;
-
+	int level = 0;
+	bool music = 1;
+	bool poster_level = 0;
 public:
 	static options* Instance()
 	{
@@ -31,9 +33,21 @@ public:
 	{
 		return player;
 	}
+	bool check_poster_level()
+	{
+		return poster_level;
+	}
+	bool check_music()
+	{
+		return music;
+	}
 	bool check_bosss()
 	{
 		return boss;
+	}
+	int check_level()
+	{
+		return level;
 	}
 	bool check_victory()
 	{
@@ -63,6 +77,10 @@ public:
 	{
 		this->reset = x;
 	}
+	void get_poster_level(int x)
+	{
+		this->poster_level = x;
+	}
 	void get_poster(int x)
 	{
 		this->poster = x;
@@ -71,6 +89,10 @@ public:
 	{
 		this->pause = x;
 	}
+	void get_music(int x)
+	{
+		this->music = x;
+	}
 	void get_market(int x)
 	{
 		this->market = x;
@@ -78,6 +100,10 @@ public:
 	void get_victory(int x)
 	{
 		this->victory = x;
+	}
+	void get_level(int x)
+	{
+		this->level = x;
 	}
 	void get_boss(int x)
 	{

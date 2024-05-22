@@ -1,4 +1,4 @@
-#include"Game.h"
+﻿#include"Game.h"
 #include<vector>
 #include"sound.h"
 #include"options.h"
@@ -22,6 +22,17 @@ void Game:: push(Enemy enemy)
 bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
 {
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+		return 1;
+	}
+
+	// Initialize SDL_image
+	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+		std::cerr << "SDL_image could not initialize! IMG_Error: " << IMG_GetError() << std::endl;
+		SDL_Quit();
+		return 1;
+	}
 	// attempt to initialize SDL
 	sound::Instance()->init();
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
@@ -312,6 +323,22 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	{
 		return false;
 	}
+	if (!TextureManager::Instance()->load("assets/easy.png", "easy", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/medium.png", "medium", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/hard.png", "hard", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TextureManager::Instance()->load("assets/LEVEL.png", "level", m_pRenderer))
+	{
+		return false;
+	}
 	//sound
 	sound::Instance()->loadSound("assets/attack.mp3", "attack");
 	sound::Instance()->loadSound("assets/attack_enemy_house.mp3", "attack_enemy_house");
@@ -324,7 +351,10 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	sound::Instance()->loadSound("assets/boom.mp3", "boom");
 	sound::Instance()->loadSound("assets/hurt.mp3", "hurt");
 	sound::Instance()->loadSound("assets/heal.mp3", "heal");
-	ugold.get_xy(100, 100);
+	sound::Instance()->loadSound("assets/run.mp3", "run");
+	sound::Instance()->loadSound("assets/victory.mp3", "victory");
+	sound::Instance()->loadMusic("assets/music_game.wav", "music_game");
+	sound::Instance()->play_music("music_game");
 	enemy_house e_house;
 	e_house.set_vt(589, 18);
 	Enemy_house.push_back(e_house);
@@ -358,7 +388,88 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	options::Instance()->get_renderer(m_pRenderer);
 	std::cout << "init success\n";
 	m_bRunning = true;
-	return true;
+	SDL_Surface* icon = IMG_Load("assets/icon.png"); // Sử dụng dấu gạch chéo
+		// Đặt icon cho cửa sổ
+	cout << icon << " co \n";
+	SDL_SetWindowIcon(m_pWindow, icon);
+	// Giải phóng Surface icon
+	SDL_FreeSurface(icon);
+}
+void Game:: level()
+{
+	SDL_RenderClear(m_pRenderer);
+	TextureManager::Instance()->draw_player("p", 0, 0, 0, 0,
+		1280, 640, 700, 500, m_pRenderer, SDL_FLIP_NONE);
+	TextureManager::Instance()->draw_player("menu_ingame", 280, 50, 35, 30,
+		120, 131, 150, 205,m_pRenderer, SDL_FLIP_NONE);
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+	SDL_Event event1;
+	if (y >= 80 && y <= 120 && x >= 313 && x <= 403)
+	{
+
+		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
+		{
+			sound::Instance()->play_sound("spray");
+			TextureManager::Instance()->draw_player("easy", 313, 80, 134, 0,
+				65, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+			options::Instance()->get_poster_level(0);
+			options::Instance()->get_level(-1);
+
+		}
+		else
+			TextureManager::Instance()->draw_player("easy", 313, 80, 67, 0,
+				67, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+	}
+	else
+	{
+		TextureManager::Instance()->draw_player("easy", 313, 80, 0, 0,
+			65, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+	}
+
+	if (y >= 125 && y <= 165 && x >= 313 && x <= 403)
+	{
+
+		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
+		{
+			sound::Instance()->play_sound("spray");
+			TextureManager::Instance()->draw_player("medium", 313, 125, 134, 0,
+				65, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+			options::Instance()->get_poster_level(0);
+			options::Instance()->get_level(0);
+
+		}
+		else
+			TextureManager::Instance()->draw_player("medium", 313, 125, 67, 0,
+				67, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+	}
+	else
+	{
+		TextureManager::Instance()->draw_player("medium", 313, 125, 0, 0,
+			65, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+	}
+
+	if (y >= 170 && y <= 210 && x >= 313 && x <= 403)
+	{
+
+		if (SDL_PollEvent(&event1) && event1.type == SDL_MOUSEBUTTONDOWN && event1.button.button == SDL_BUTTON_LEFT)
+		{
+			sound::Instance()->play_sound("spray");
+			TextureManager::Instance()->draw_player("hard", 313, 170, 134, 0,
+				65, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+			options::Instance()->get_poster_level(0);
+			options::Instance()->get_level(1);
+
+		}
+		else
+			TextureManager::Instance()->draw_player("hard", 313, 170, 67, 0,
+				67, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+	}
+	else
+	{
+		TextureManager::Instance()->draw_player("hard", 313, 170, 0, 0,
+			65, 37, 90, 40, m_pRenderer, SDL_FLIP_NONE);
+	}
 }
 void Game::menu()
 {
@@ -373,7 +484,9 @@ void Game::menu()
 			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 300, 40, 128, 1,
 				62, 30, 115, 50, m_pRenderer, SDL_FLIP_NONE);
+			options::Instance()->get_poster_level(1);
 			options::Instance()->get_poster(0);
+
 		}
 		else
 			TextureManager::Instance()->draw_player("menu", 300, 40, 64, 1,
@@ -392,6 +505,18 @@ void Game::menu()
 			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 300, 95, 320, 352,
 				62, 30, 115, 50, m_pRenderer, SDL_FLIP_NONE);
+			if (options::Instance()->check_music() == 1)
+			{
+				cout << "tat\n";
+				options::Instance()->get_music(0);
+				Mix_PauseMusic();
+			}
+			else
+			{
+				cout << "bat\n";
+				options::Instance()->get_music(1);
+				Mix_ResumeMusic();
+			}
 		}
 		else
 			TextureManager::Instance()->draw_player("menu", 300, 95, 256, 352,
@@ -513,7 +638,6 @@ void Game::menu_ingame()
 				94, 30, 90, 40, m_pRenderer, SDL_FLIP_NONE);
 			options::Instance()->get_pause(0);
 		}
-		else
 			TextureManager::Instance()->draw_player("menu", 322, 170, 480, 128,
 				94, 30, 90, 40, m_pRenderer, SDL_FLIP_NONE);
 	}
@@ -527,6 +651,16 @@ void Game::menu_ingame()
 			sound::Instance()->play_sound("spray");
 			TextureManager::Instance()->draw_player("menu", 322, 215, 320, 352,
 				62, 30, 90, 35, m_pRenderer, SDL_FLIP_NONE);
+			if (options::Instance()->check_music() == 1)
+			{
+				options::Instance()->get_music(0);
+				Mix_PauseMusic();
+			}
+			else
+			{
+				options::Instance()->get_music(1);
+				Mix_ResumeMusic();
+			}
 		}
 		else
 			TextureManager::Instance()->draw_player("menu", 322, 215, 256, 352,
@@ -583,6 +717,11 @@ void Game::update()
 }
 void Game::victory_menu()
 {
+	if (victory == 0)
+	{
+		sound::Instance()->play_sound("victory");
+		victory = 1;
+	}
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 	SDL_Event event1;
@@ -624,14 +763,20 @@ void Game::victory_menu()
 
 void Game::render()
 {
-	if (options::Instance()->check_poster() == 1 || options::Instance()->check_victory()==1)
+	if (options::Instance()->check_poster() == 1 || options::Instance()->check_victory()==1 || options::Instance()->check_poster_level() == 1)
 	{
 		if (options::Instance()->check_victory()==1)
 		{
 			TextureManager::Instance()->draw_player("victory", 210, 130, 0, 0,
 				262, 81, 280, 81, m_pRenderer, SDL_FLIP_NONE);
-			SDL_RenderPresent(m_pRenderer);
 			victory_menu();
+			SDL_RenderPresent(m_pRenderer);
+			
+		}
+		else if (options::Instance()->check_poster_level() == 1)
+		{
+			level();
+			SDL_RenderPresent(m_pRenderer);
 		}
 		else
 		{
@@ -763,20 +908,36 @@ void Game::render()
 				}
 				if (destroy_house >= 7)
 				{
-					cout << "co\n";
 					Boss.move();
 					Boss.draw(m_pRenderer);
 					Boss.check_being_attack(Game::Instance()->hitbox(), m_pRenderer);
-					if(delay_enemy_boss ==0) TextureManager::Instance()->draw_player("victory", 660, 5, 288, 32,
-						30, 30, 30, 30, m_pRenderer, SDL_FLIP_NONE);
+					if (delay_enemy_boss == 0)
+					{
+						Enemy e;
+						e.spawn();
+						vector_enemy.push_back(e);
+						Enemy2 e2;
+						e2.spawn();
+						vector_enemy2.push_back(e2);
+					}
 					if (delay_enemy_boss <= 0)
 					{
-						delay_enemy_boss = 50;
+						if (options::Instance()->check_level() == -1)
+						{
+							delay_enemy_boss = 200;
+						}
+						if (options::Instance()->check_level() == 0)
+						{
+							delay_enemy_boss = 100;
+						}
+						if (options::Instance()->check_level() == 1)
+						{
+							delay_enemy_boss = 45;
+						}
 					}
 					delay_enemy_boss--;
 					if (Boss.check_done() == 1)
 					{
-						sound::Instance()->play_sound("victory");
 						options::Instance()->get_victory(1);
 					}
 				}

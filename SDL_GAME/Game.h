@@ -97,6 +97,7 @@ public:
 	void draw_number(int x, int  y, int number, SDL_Renderer* pRenderer);
 	void draw_number2(int x, int  y, int number, SDL_Renderer* pRenderer);
 	void market();
+	void level();
 private:
 	int m_currentFrame;
 	SDL_Window* m_pWindow;
@@ -121,6 +122,7 @@ private:
 	skill_tornado tornado;
 	boss Boss;
 	int destroy_house;
+	bool victory = 0;
 	int delay_enemy_boss = 50;
 	//vector<boom> Boom;
 	//boom b;
